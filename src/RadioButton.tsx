@@ -1,4 +1,6 @@
 import * as React from "react";
+import { action } from "mobx";
+import { observer } from "mobx-react";
 import { Value } from "./Value";
 import { FormElementProps, removeProps } from "./FormElementProps";
 
@@ -7,9 +9,11 @@ export interface RadioButtonProps<T> extends FormElementProps {
     option: T;
 }
 
+@observer
 export class TypedRadioButton<T> extends React.Component<RadioButtonProps<T>, {}> {
 
-    changed = (ev: React.FormEvent<HTMLInputElement>) => {
+    @action.bound
+    changed(ev: React.FormEvent<HTMLInputElement>) {
         if (ev.currentTarget.checked) {
             this.props.selected.value = this.props.option;
         }

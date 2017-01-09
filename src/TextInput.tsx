@@ -1,4 +1,6 @@
 import * as React from "react";
+import { action } from "mobx";
+import { observer } from "mobx-react";
 import { Value } from "./Value";
 import { FormElementProps, removeProps } from "./FormElementProps";
 
@@ -34,9 +36,11 @@ export interface TextInputProps extends StandardTextInputProps {
     text: Value<string>;
 }
 
+@observer
 export class TextInput extends React.Component<TextInputProps, {}> {
 
-    changed = (e: React.FormEvent<HTMLInputElement>) => {
+    @action.bound
+    changed(e: React.FormEvent<HTMLInputElement>) {
         this.props.text.value = e.currentTarget.value;
     }
 

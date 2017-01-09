@@ -1,4 +1,6 @@
 import * as React from "react";
+import { action } from "mobx";
+import { observer } from "mobx-react";
 import { Value } from "./Value";
 import { FormElementProps, removeProps } from "./FormElementProps";
 
@@ -17,13 +19,15 @@ function stringify(value: any): string {
     return JSON.stringify(value);
 }
 
+@observer
 export class TypedSelect<T> extends React.Component<SelectProps<T>, {}> {
 
     static defaultLabels(value: any) {
         return value + "";
     }
 
-    updateValue = (ev: React.FormEvent<HTMLSelectElement>) => {
+    @action.bound
+    updateValue(ev: React.FormEvent<HTMLSelectElement>) {
         // Find a value in the list that coerces to the new value
         for (const option of this.props.options) {
             if (stringify(option) === ev.currentTarget.value) {

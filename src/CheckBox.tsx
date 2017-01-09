@@ -1,4 +1,6 @@
 import * as React from "react";
+import { action } from "mobx";
+import { observer } from "mobx-react";
 import { Value } from "./value";
 import { FormElementProps, removeProps } from "./FormElementProps";
 
@@ -6,6 +8,7 @@ export interface CheckBoxProps extends FormElementProps {
     checked: Value<boolean | undefined>;
 }
 
+@observer
 export class CheckBox extends React.Component<CheckBoxProps, {}> {
 
     indeterminate = (input: HTMLInputElement) => {
@@ -14,8 +17,9 @@ export class CheckBox extends React.Component<CheckBoxProps, {}> {
         }
     }
 
-    changed = (e: React.FormEvent<HTMLInputElement>) => {
-        this.props.checked.value = e.currentTarget.checked;
+    @action.bound
+    changed(e: React.FormEvent<HTMLInputElement>) {        
+        this.props.checked.value = e.currentTarget.checked;        
     }
 
     render() {
