@@ -10,6 +10,7 @@ export interface FormElementProps {
     readonly?: boolean;
     required?: boolean;
     tabindex?: number;
+    title?: string;
 }
 
 export function removeProps<T, K extends keyof T>(props: T, ...names: K[]): any {
