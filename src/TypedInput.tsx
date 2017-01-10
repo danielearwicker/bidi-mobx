@@ -10,7 +10,6 @@ import { removeProps } from "./FormElementProps";
 export interface TypedInputProps<T> extends StandardTextInputProps {
     state: Value<T>;
     errorClass?: string;
-    jimlad: boolean;
 }
 
 @observer
