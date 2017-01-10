@@ -1,6 +1,6 @@
 {
   "name": "bidi-mobx",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Two-way binding is back, and this time it's respectable",
   "main": "built/index.js",
   "types": "built/index.d.ts",
@@ -26,6 +26,7 @@
   "homepage": "https://github.com/danielearwicker/bidi-mobx#readme",
   "dependencies": {
     "@types/react": "0.0.0",
+    "meta-object": "^0.2.1",
     "mobx": "^3.0.0",
     "mobx-react": "^4.1.0",
     "react": "^15.4.2"
