@@ -602,9 +602,9 @@ loose-envify@^1.0.0, loose-envify@^1.1.0:
   dependencies:
     js-tokens "^2.0.0"
 
-meta-object@^0.3.0:
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/meta-object/-/meta-object-0.3.0.tgz#510313b354564a2f7497fa2809283dfb42549844"
+meta-object@^0.3.2:
+  version "0.3.2"
+  resolved "https://registry.yarnpkg.com/meta-object/-/meta-object-0.3.2.tgz#8112bced1bcf24e2baf295ef6b67426a83c92003"
 
 mime-db@~1.25.0:
   version "1.25.0"
