@@ -1,13 +1,13 @@
 import * as React from "react";
 
 import { observer } from "mobx-react";
-import { MetaValue, from } from "meta-object";
+import { BoxedValue, box } from "boxm";
 import { TextInput, StandardTextInputProps } from "./TextInput";
 import { ConversionModel, ParseResult } from "./ConversionModel";
 import { removeProps } from "./FormElementProps";
 
 export interface TypedInputProps<T> extends StandardTextInputProps {
-    value: MetaValue<T>;
+    value: BoxedValue<T>;
     errorClass?: string;
 }
 
@@ -63,7 +63,7 @@ export class TypedInput<T, P extends TypedInputProps<T>> extends React.Component
 
         return <TextInput 
             {...removeProps(this.props, ...this.propsToRemove())}
-            value={from(this.conversion).formatted} 
+            value={box(this.conversion).formatted} 
             className={className}
             title={this.conversion.error} />
     }

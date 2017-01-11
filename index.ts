@@ -6,4 +6,4 @@ export * from "./src/TextInput";
 export * from "./src/ConversionModel";
 export * from "./src/TypedInput";
 export * from "./src/NumberInput";
-export * from "meta-object";
+export * from "boxm";

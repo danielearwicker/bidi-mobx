@@ -1,5 +1,5 @@
 import { action, observable, Lambda, autorun } from "mobx";
-import { MetaValue } from "meta-object";
+import { BoxedValue } from "boxm";
 
 export type ParseResult<T> = { error: string } | { value: T };
 
@@ -9,14 +9,14 @@ export function isParseError<T>(result: ParseResult<T>): result is { error: stri
 
 export class ConversionModel<Formatted, Parsed> {
 
-    @observable parsed: MetaValue<Parsed>;
+    @observable parsed: BoxedValue<Parsed>;
     @observable formatted: Formatted;
     @observable error: string | undefined;
 
     private stopWatchingFormatted: Lambda;
     private stopWatchingParsed: Lambda;
 
-    constructor(parsed: MetaValue<Parsed>,
+    constructor(parsed: BoxedValue<Parsed>,
         private format: (value: Parsed) => Formatted,
         private parse: (str: Formatted) => ParseResult<Parsed>
     ) {

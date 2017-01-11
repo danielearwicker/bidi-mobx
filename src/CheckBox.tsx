@@ -1,11 +1,11 @@
 import * as React from "react";
 import { action } from "mobx";
 import { observer } from "mobx-react";
-import { MetaValue } from "meta-object";
+import { BoxedValue } from "boxm";
 import { FormElementProps, removeProps } from "./FormElementProps";
 
 export interface CheckBoxProps extends FormElementProps {
-    value: MetaValue<boolean | undefined>;
+    value: BoxedValue<boolean | undefined>;
 }
 
 @observer
