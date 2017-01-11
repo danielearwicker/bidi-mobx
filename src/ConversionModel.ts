@@ -1,5 +1,5 @@
 import { action, observable, Lambda, autorun } from "mobx";
-import { Value } from "./Value";
+import { MetaValue } from "meta-object";
 
 export type ParseResult<T> = { error: string } | { value: T };
 
@@ -9,19 +9,19 @@ export function isParseError<T>(result: ParseResult<T>): result is { error: stri
 
 export class ConversionModel<Formatted, Parsed> {
 
-    @observable parsed: Value<Parsed>;
+    @observable parsed: MetaValue<Parsed>;
     @observable formatted: Formatted;
     @observable error: string | undefined;
 
     stopWatchingFormatted: Lambda;
     stopWatchingParsed: Lambda;
 
-    constructor(parsed: Value<Parsed>,
+    constructor(parsed: MetaValue<Parsed>,
         private format: (value: Parsed) => Formatted,
         private parse: (str: Formatted) => ParseResult<Parsed>
     ) {
         this.parsed = parsed;
-        this.formatted = this.format(parsed.value);
+        this.formatted = this.format(parsed.get());
         this.stopWatchingFormatted = autorun(this.watchFormatted);
         this.stopWatchingParsed = autorun(this.watchParsed);
     }
@@ -40,9 +40,9 @@ export class ConversionModel<Formatted, Parsed> {
             this.error = undefined;
             // Round-trip to get a canonical formatted for comparison
             const roundTrippedParsed = this.format(parsed.value);
-            const formatted = this.format(this.parsed.value);
+            const formatted = this.format(this.parsed.get());
             if (roundTrippedParsed !== formatted) {
-                this.parsed.value = parsed.value;
+                this.parsed.set(parsed.value);
             }
         }
     }
@@ -56,7 +56,7 @@ export class ConversionModel<Formatted, Parsed> {
         if (isParseError(parsed)) {
             // Not currently valid, so just accept better replacement
             this.formatted = newFormatted;
-            this.parsed.value = newParsed;
+            this.parsed.set(newParsed);
         }
         else
         {
@@ -75,6 +75,6 @@ export class ConversionModel<Formatted, Parsed> {
 
     // Track changes made to this.parsed.value
     watchParsed = () => {
-        this.updateFromParsed(this.parsed.value);
+        this.updateFromParsed(this.parsed.get());
     }
 }

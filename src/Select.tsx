@@ -1,11 +1,11 @@
 import * as React from "react";
 import { action } from "mobx";
 import { observer } from "mobx-react";
-import { Value } from "./Value";
+import { MetaValue } from "meta-object";
 import { FormElementProps, removeProps } from "./FormElementProps";
 
 export interface SelectProps<T> extends FormElementProps {
-    selected: Value<T>;
+    selected: MetaValue<T>;
     options: T[];
     labels?: (value: T) => string;
     size?: number;
@@ -31,7 +31,7 @@ export class TypedSelect<T> extends React.Component<SelectProps<T>, {}> {
         // Find a value in the list that coerces to the new value
         for (const option of this.props.options) {
             if (stringify(option) === ev.currentTarget.value) {
-                this.props.selected.value = option;
+                this.props.selected.set(option);
                 return;
             }
         }
@@ -42,7 +42,7 @@ export class TypedSelect<T> extends React.Component<SelectProps<T>, {}> {
 
         return ( 
             <select {...removeProps(this.props, "selected", "options")}
-                        value={stringify(this.props.selected.value)} 
+                        value={stringify(this.props.selected.get())} 
                         onChange={this.updateValue}>
             {
                 this.props.options.map(option => {

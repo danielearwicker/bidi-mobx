@@ -1,7 +1,7 @@
 import * as React from "react";
 import { action } from "mobx";
 import { observer } from "mobx-react";
-import { Value } from "./Value";
+import { MetaValue } from "meta-object";
 import { FormElementProps, removeProps } from "./FormElementProps";
 
 export type AutoComplete = "off"|"on"|"name"|"honorific-prefix"|"given-name"|"additional-name"|
@@ -33,7 +33,7 @@ export interface StandardTextInputProps extends FormElementProps {
 }
 
 export interface TextInputProps extends StandardTextInputProps {
-    text: Value<string>;
+    text: MetaValue<string>;
 }
 
 @observer
@@ -41,14 +41,14 @@ export class TextInput extends React.Component<TextInputProps, {}> {
 
     @action.bound
     changed(e: React.FormEvent<HTMLInputElement>) {
-        this.props.text.value = e.currentTarget.value;
+        this.props.text.set(e.currentTarget.value);
     }
 
     render() {
         return (
             <input type="text" 
             {...removeProps(this.props, "text")} 
-            value={this.props.text.value}
+            value={this.props.text.get()}
             onChange={this.changed} />
         );
     }

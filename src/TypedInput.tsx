@@ -1,14 +1,13 @@
 import * as React from "react";
 
 import { observer } from "mobx-react";
-import { Value } from "./Value";
+import { MetaValue, from } from "meta-object";
 import { TextInput, StandardTextInputProps } from "./TextInput";
 import { ConversionModel, ParseResult } from "./ConversionModel";
-import { from } from "meta-object";
 import { removeProps } from "./FormElementProps";
 
 export interface TypedInputProps<T> extends StandardTextInputProps {
-    state: Value<T>;
+    state: MetaValue<T>;
     errorClass?: string;
 }
 
@@ -64,7 +63,7 @@ export class TypedInput<T, P extends TypedInputProps<T>> extends React.Component
 
         return <TextInput 
             {...removeProps(this.props, ...this.propsToRemove())}
-            text={from(this.conversion)("formatted")} 
+            text={from(this.conversion).formatted} 
             className={className}
             title={this.conversion.error} />
     }
