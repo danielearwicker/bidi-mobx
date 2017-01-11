@@ -5,7 +5,7 @@ import { MetaValue } from "meta-object";
 import { FormElementProps, removeProps } from "./FormElementProps";
 
 export interface SelectProps<T> extends FormElementProps {
-    selected: MetaValue<T>;
+    value: MetaValue<T>;
     options: T[];
     labels?: (value: T) => string;
     size?: number;
@@ -31,7 +31,7 @@ export class TypedSelect<T> extends React.Component<SelectProps<T>, {}> {
         // Find a value in the list that coerces to the new value
         for (const option of this.props.options) {
             if (stringify(option) === ev.currentTarget.value) {
-                this.props.selected.set(option);
+                this.props.value.set(option);
                 return;
             }
         }
@@ -41,8 +41,8 @@ export class TypedSelect<T> extends React.Component<SelectProps<T>, {}> {
         const labels = this.props.labels || TypedSelect.defaultLabels;
 
         return ( 
-            <select {...removeProps(this.props, "selected", "options")}
-                        value={stringify(this.props.selected.get())} 
+            <select {...removeProps(this.props, "value", "options")}
+                        value={stringify(this.props.value.get())} 
                         onChange={this.updateValue}>
             {
                 this.props.options.map(option => {

@@ -5,7 +5,7 @@ import { MetaValue } from "meta-object";
 import { FormElementProps, removeProps } from "./FormElementProps";
 
 export interface RadioButtonProps<T> extends FormElementProps {
-    selected: MetaValue<T>;
+    value: MetaValue<T>;
     option: T;
 }
 
@@ -15,14 +15,14 @@ export class TypedRadioButton<T> extends React.Component<RadioButtonProps<T>, {}
     @action.bound
     changed(ev: React.FormEvent<HTMLInputElement>) {
         if (ev.currentTarget.checked) {
-            this.props.selected.set(this.props.option);
+            this.props.value.set(this.props.option);
         }
     }
 
     render() {
         return <input type="radio"
-            {...removeProps(this.props, "selected", "option")}
-            checked={this.props.selected.get() === this.props.option}
+            {...removeProps(this.props, "value", "option")}
+            checked={this.props.value.get() === this.props.option}
             onChange={this.changed} />;
     }
 }

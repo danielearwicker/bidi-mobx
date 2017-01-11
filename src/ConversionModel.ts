@@ -13,8 +13,8 @@ export class ConversionModel<Formatted, Parsed> {
     @observable formatted: Formatted;
     @observable error: string | undefined;
 
-    stopWatchingFormatted: Lambda;
-    stopWatchingParsed: Lambda;
+    private stopWatchingFormatted: Lambda;
+    private stopWatchingParsed: Lambda;
 
     constructor(parsed: MetaValue<Parsed>,
         private format: (value: Parsed) => Formatted,
@@ -32,7 +32,7 @@ export class ConversionModel<Formatted, Parsed> {
     }
 
     @action
-    updateFromFormatted(newFormatted: Formatted) {
+    private updateFromFormatted(newFormatted: Formatted) {
         const parsed = this.parse(newFormatted);
         if (isParseError(parsed)) {
             this.error = parsed.error;
@@ -48,7 +48,7 @@ export class ConversionModel<Formatted, Parsed> {
     }
 
     @action
-    updateFromParsed(newParsed: Parsed) {
+    private updateFromParsed(newParsed: Parsed) {
         const newFormatted = this.format(newParsed);
 
         // Round-trip to get a canonical formatted for comparison
@@ -69,12 +69,12 @@ export class ConversionModel<Formatted, Parsed> {
     }
 
     // Tracks changes made to this.formatted
-    watchFormatted = () => {
+    private watchFormatted = () => {
         this.updateFromFormatted(this.formatted);
     }
 
     // Track changes made to this.parsed.value
-    watchParsed = () => {
+    private watchParsed = () => {
         this.updateFromParsed(this.parsed.get());
     }
 }

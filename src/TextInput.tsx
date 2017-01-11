@@ -33,7 +33,7 @@ export interface StandardTextInputProps extends FormElementProps {
 }
 
 export interface TextInputProps extends StandardTextInputProps {
-    text: MetaValue<string>;
+    value: MetaValue<string>;
 }
 
 @observer
@@ -41,14 +41,14 @@ export class TextInput extends React.Component<TextInputProps, {}> {
 
     @action.bound
     changed(e: React.FormEvent<HTMLInputElement>) {
-        this.props.text.set(e.currentTarget.value);
+        this.props.value.set(e.currentTarget.value);
     }
 
     render() {
         return (
             <input type="text" 
-            {...removeProps(this.props, "text")} 
-            value={this.props.text.get()}
+            {...removeProps(this.props, "value")} 
+            value={this.props.value.get()}
             onChange={this.changed} />
         );
     }

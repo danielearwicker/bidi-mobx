@@ -7,7 +7,7 @@ import { ConversionModel, ParseResult } from "./ConversionModel";
 import { removeProps } from "./FormElementProps";
 
 export interface TypedInputProps<T> extends StandardTextInputProps {
-    state: MetaValue<T>;
+    value: MetaValue<T>;
     errorClass?: string;
 }
 
@@ -26,7 +26,7 @@ export class TypedInput<T, P extends TypedInputProps<T>> extends React.Component
         this.boundParse = s => this.parse(s);
 
         this.conversion = new ConversionModel<string, T>(
-            props.state, this.boundFormat, this.boundParse);
+            props.value, this.boundFormat, this.boundParse);
     }
 
     componentWillUnmount() {
@@ -34,7 +34,7 @@ export class TypedInput<T, P extends TypedInputProps<T>> extends React.Component
     }
 
     componentWillReceiveProps(props: P) {
-        this.conversion.parsed = props.state;
+        this.conversion.parsed = props.value;
     }
 
     format(value: T): string {
@@ -50,7 +50,7 @@ export class TypedInput<T, P extends TypedInputProps<T>> extends React.Component
     }
 
     propsToRemove(): (keyof P)[] {
-        return ["state", "errorClass"];
+        return ["value", "errorClass"];
     }
 
     render() {
@@ -63,7 +63,7 @@ export class TypedInput<T, P extends TypedInputProps<T>> extends React.Component
 
         return <TextInput 
             {...removeProps(this.props, ...this.propsToRemove())}
-            text={from(this.conversion).formatted} 
+            value={from(this.conversion).formatted} 
             className={className}
             title={this.conversion.error} />
     }
