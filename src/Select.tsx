@@ -8,15 +8,8 @@ export interface SelectProps<T> extends FormElementProps {
     value: BoxedValue<T>;
     options: T[];
     labels?: (value: T) => string;
+    keys?: (value: T) => string; 
     size?: number;
-}
-
-function stringify(value: any): string {
-    if (value === undefined) {
-        return "undefined";
-    }
-    value = value.valueOf();
-    return JSON.stringify(value);
 }
 
 @observer
@@ -26,11 +19,20 @@ export class TypedSelect<T> extends React.Component<SelectProps<T>, {}> {
         return value + "";
     }
 
+    static defaultKeys(value: any) {
+        if (value === undefined) {
+            return "undefined";
+        }
+        value = value.valueOf();
+        return JSON.stringify(value);
+    }
+
     @action.bound
     updateValue(ev: React.FormEvent<HTMLSelectElement>) {
+        const keys = this.props.keys || TypedSelect.defaultKeys;
         // Find a value in the list that coerces to the new value
         for (const option of this.props.options) {
-            if (stringify(option) === ev.currentTarget.value) {
+            if (keys(option) === ev.currentTarget.value) {
                 this.props.value.set(option);
                 return;
             }
@@ -39,14 +41,15 @@ export class TypedSelect<T> extends React.Component<SelectProps<T>, {}> {
 
     render() {
         const labels = this.props.labels || TypedSelect.defaultLabels;
+        const keys = this.props.keys || TypedSelect.defaultKeys;
 
         return ( 
             <select {...removeProps(this.props, "value", "options")}
-                        value={stringify(this.props.value.get())} 
+                        value={keys(this.props.value.get())} 
                         onChange={this.updateValue}>
             {
                 this.props.options.map(option => {
-                    const val = stringify(option);
+                    const val = keys(option);
                     return <option key={val} value={val}>{labels(option)}</option>
                 })
             }
