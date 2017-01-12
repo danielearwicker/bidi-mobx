@@ -8,3 +8,4 @@ export const box = boxer((obj, key) => {
     return atom || makeBoxedValue(obj, key);
 });
 
+export { BoxedValue, BoxedObject } from "boxm";
