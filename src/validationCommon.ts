@@ -2,7 +2,7 @@ import { observable } from "mobx";
 import * as React from "react";
 
 export const validationGroupContext = {
-    bidiMobxValidationCreate: React.PropTypes.object
+    bidiMobxValidationCreate: React.PropTypes.func
 };
 
 export class ValidationItem {
