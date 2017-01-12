@@ -104,9 +104,9 @@ boom@2.x.x:
   dependencies:
     hoek "2.x.x"
 
-boxm@^0.3.3:
-  version "0.3.3"
-  resolved "https://registry.yarnpkg.com/boxm/-/boxm-0.3.3.tgz#3de83800ec17aed8b62e0aae0f6092c7d00bced2"
+boxm@^0.4.1:
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/boxm/-/boxm-0.4.1.tgz#79d40e33439af7922429a9c44ab2e752271c339c"
 
 brace-expansion@^1.0.0:
   version "1.1.6"
@@ -289,7 +289,7 @@ fast-levenshtein@~2.0.4:
   version "2.0.6"
   resolved "https://registry.yarnpkg.com/fast-levenshtein/-/fast-levenshtein-2.0.6.tgz#3d8a5c66883a16a30ca8643e851f19baa7797917"
 
-fbjs@^0.8.4:
+fbjs@^0.8.1, fbjs@^0.8.4:
   version "0.8.8"
   resolved "https://registry.yarnpkg.com/fbjs/-/fbjs-0.8.8.tgz#02f1b6e0ea0d46c24e0b51a2d24df069563a5ad6"
   dependencies:
@@ -738,6 +738,14 @@ punycode@^1.4.1:
 qs@~6.2.0:
   version "6.2.1"
   resolved "https://registry.yarnpkg.com/qs/-/qs-6.2.1.tgz#ce03c5ff0935bc1d9d69a9f14cbd18e568d67625"
+
+react-dom@^15.4.2:
+  version "15.4.2"
+  resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-15.4.2.tgz#015363f05b0a1fd52ae9efdd3a0060d90695208f"
+  dependencies:
+    fbjs "^0.8.1"
+    loose-envify "^1.1.0"
+    object-assign "^4.1.0"
 
 react@^15.4.2:
   version "15.4.2"
