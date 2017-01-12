@@ -44,7 +44,7 @@ export class TypedSelect<T> extends React.Component<SelectProps<T>, {}> {
         const keys = this.props.keys || TypedSelect.defaultKeys;
 
         return ( 
-            <select {...removeProps(this.props, "value", "options")}
+            <select {...removeProps(this.props, "value", "options", "labels", "keys", "size")}
                         value={keys(this.props.value.get())} 
                         onChange={this.updateValue}>
             {
