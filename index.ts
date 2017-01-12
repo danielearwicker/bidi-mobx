@@ -1,3 +1,4 @@
+export * from "./src/Button";
 export * from "./src/CheckBox";
 export * from "./src/FormElementProps";
 export * from "./src/RadioButton";
