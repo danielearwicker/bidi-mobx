@@ -6,4 +6,4 @@ export * from "./src/TextInput";
 export * from "./src/ConversionModel";
 export * from "./src/TypedInput";
 export * from "./src/NumberInput";
-export { box } from "./src/box";
+export * from "./src/box";
