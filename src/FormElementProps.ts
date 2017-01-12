@@ -12,7 +12,6 @@ export interface FormElementProps {
     required?: boolean;
     tabindex?: number;
     title?: string;
-    enabled?: BoxedValue<boolean>;
 }
 
 export function removeProps<T, K extends keyof T>(props: T, ...names: K[]): any {

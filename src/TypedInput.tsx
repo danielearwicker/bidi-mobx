@@ -50,7 +50,7 @@ export class TypedInput<T, P extends TypedInputProps<T>> extends React.Component
     }
 
     propsToRemove(): (keyof P)[] {
-        return ["value", "errorClass", "enabled"];
+        return ["value", "errorClass"];
     }
 
     render() {
@@ -64,7 +64,6 @@ export class TypedInput<T, P extends TypedInputProps<T>> extends React.Component
         return <TextInput 
             {...removeProps(this.props, ...this.propsToRemove())}
             value={box(this.conversion).formatted} 
-            className={className}
-            enabled={this.props.enabled} />
+            className={className} />
     }
 }

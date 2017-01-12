@@ -50,6 +50,8 @@ export class Validation extends React.Component<ValidationProps, {}> {
     }
 
     render() {
-        return this.props.test && this.props.children ? <div>{this.props.children}</div> : null;
+        return this.props.test && this.props.children 
+            ? <div>{this.props.children}</div> 
+            : null;
     }
 }

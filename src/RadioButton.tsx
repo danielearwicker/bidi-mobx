@@ -21,9 +21,8 @@ export class TypedRadioButton<T> extends React.Component<RadioButtonProps<T>, {}
 
     render() {
         return <input type="radio"
-            {...removeProps(this.props, "value", "option", "enabled")}
-            checked={this.props.value.get() === this.props.option}
-            disabled={this.props.enabled && !this.props.enabled.get()}
+            {...removeProps(this.props, "value", "option")}
+            checked={this.props.value.get() === this.props.option}            
             onChange={this.changed} />;
     }
 }
