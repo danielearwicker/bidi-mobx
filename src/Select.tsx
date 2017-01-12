@@ -41,8 +41,9 @@ export class TypedSelect<T> extends React.Component<SelectProps<T>, {}> {
         const labels = this.props.labels || TypedSelect.defaultLabels;
 
         return ( 
-            <select {...removeProps(this.props, "value", "options")}
+            <select {...removeProps(this.props, "value", "options", "enabled")}
                         value={stringify(this.props.value.get())} 
+                        disabled={this.props.enabled && !this.props.enabled.get()}
                         onChange={this.updateValue}>
             {
                 this.props.options.map(option => {

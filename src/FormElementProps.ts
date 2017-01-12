@@ -1,4 +1,5 @@
 import { CSSProperties } from "react";
+import { BoxedValue } from "boxm";
 
 export interface FormElementProps {
     autofocus?: boolean;
@@ -11,6 +12,7 @@ export interface FormElementProps {
     required?: boolean;
     tabindex?: number;
     title?: string;
+    enabled?: BoxedValue<boolean>;
 }
 
 export function removeProps<T, K extends keyof T>(props: T, ...names: K[]): any {

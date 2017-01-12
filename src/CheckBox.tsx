@@ -25,8 +25,9 @@ export class CheckBox extends React.Component<CheckBoxProps, {}> {
     render() {
         return ( 
             <input type="checkbox" 
-                {...removeProps(this.props, "value")}
+                {...removeProps(this.props, "value", "enabled")}
                 checked={this.props.value.get() || false}
+                disabled={this.props.enabled && !this.props.enabled.get()}
                 ref={this.indeterminate}
                 onChange={this.changed}/> 
         );

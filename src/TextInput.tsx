@@ -47,9 +47,10 @@ export class TextInput extends React.Component<TextInputProps, {}> {
     render() {
         return (
             <input type="text" 
-            {...removeProps(this.props, "value")} 
-            value={this.props.value.get()}
-            onChange={this.changed} />
+                {...removeProps(this.props, "value", "enabled")} 
+                value={this.props.value.get()}
+                disabled={this.props.enabled && !this.props.enabled.get()}
+                onChange={this.changed} />
         );
     }
 }
