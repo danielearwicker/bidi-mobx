@@ -1,5 +1,4 @@
 import { CSSProperties } from "react";
-import { BoxedValue } from "boxm";
 
 export interface FormElementProps {
     autofocus?: boolean;
