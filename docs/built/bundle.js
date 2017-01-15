@@ -21537,26 +21537,26 @@
 	var TextInput_1 = __webpack_require__(184);
 	var RuleBullets_1 = __webpack_require__(186);
 	var factor = field_1.field(field_1.numberLimits(1, 10)).also(field_1.numberAsString(2));
-	function makeViewState() {
-	    var a = factor.create(1, "A"), b = factor.create(2, "B");
-	    var limit = rules_1.rule(function () { return (a.model + b.model > 10) ?
-	        "Total " + a.model + " + " + b.model + " is too big" : []; });
-	    return {
-	        a: a,
-	        b: b,
-	        product: mobx_1.computed(function () { return a.model * b.model; }),
-	        validation: rules_1.rules([a, b, limit], function (l, e) { return l + ": " + e; })
-	    };
-	}
 	var NumberEditor = (function (_super) {
 	    __extends(NumberEditor, _super);
 	    function NumberEditor() {
 	        var _this = _super !== null && _super.apply(this, arguments) || this;
-	        _this.viewState = makeViewState();
+	        _this.a = factor.create(1, "A");
+	        _this.b = factor.create(2, "B");
+	        _this.limit = rules_1.rule(function () {
+	            return (_this.a.model + _this.b.model > 10) ?
+	                "Total " + _this.a.model + " + " + _this.b.model + " is too big" : [];
+	        });
+	        _this.validation = rules_1.rules([_this.a, _this.b, _this.limit]);
 	        return _this;
 	    }
+	    Object.defineProperty(NumberEditor.prototype, "product", {
+	        get: function () { return this.a.model * this.b.model; },
+	        enumerable: true,
+	        configurable: true
+	    });
 	    NumberEditor.prototype.render = function () {
-	        var _a = this.viewState, a = _a.a, b = _a.b, product = _a.product, validation = _a.validation;
+	        var _a = this, a = _a.a, b = _a.b, product = _a.product, validation = _a.validation;
 	        return (React.createElement("div", null,
 	            React.createElement("div", null,
 	                React.createElement("label", null,
@@ -21568,12 +21568,15 @@
 	                    React.createElement(TextInput_1.default, { value: b }))),
 	            React.createElement("div", null,
 	                "Product (a * b) = ",
-	                product.get()),
+	                product),
 	            React.createElement("hr", null),
 	            React.createElement(RuleBullets_1.default, { rule: validation })));
 	    };
 	    return NumberEditor;
 	}(React.Component));
+	__decorate([
+	    mobx_1.computed
+	], NumberEditor.prototype, "product", null);
 	NumberEditor = __decorate([
 	    mobx_react_1.observer
 	], NumberEditor);
