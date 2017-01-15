@@ -24,7 +24,7 @@ export default class NumberEditor extends React.Component<{}, {}> {
     private validation = rules([this.a, this.b, this.limit]);
     
     @computed
-    get product() { return this.a.model * this.b.model }
+    get product() { return this.a.model * this.b.model; }
 
     render() {
         const { a, b, product, validation } = this;

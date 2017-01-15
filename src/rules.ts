@@ -6,9 +6,11 @@ export interface Rule {
 }
 
 export function errors(loose: Rule): string[] {
-    const dupes: { [str: string]: boolean } = {}, result = [], list = !loose.error ? [] : 
-        typeof loose.error === "string" ? [loose.error] :
-        loose.error;
+    const dupes: { [str: string]: boolean } = {}, 
+        result = [], 
+        list = !loose.error ? [] : 
+            typeof loose.error === "string" ? [loose.error] :
+            loose.error;
     
     for (const err of list) {
         if (err && !(err in dupes)) {
@@ -62,7 +64,8 @@ export function props(rule: Rule, props: {
         const prefix = className ? (className + " ") : "",
                 suffix = props.errorClass || "has-errors";
         className = `${prefix}${suffix}`;
-        title += "\n" + errs.join("\n");
+
+        title = (title ? title + "\n" : "") + errs.join("\n");        
     }
 
     return { className, title };

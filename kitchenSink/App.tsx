@@ -17,12 +17,14 @@ export default function App(props: {}) {
                 <h1>Kitchen Sink for bidi-mobx</h1>
                 <p>A selection of miscellaneous demos and interactive test beds.</p>
             </section>
+
             <section>
                 <h2>Multiplier</h2>
                 <p>A calculator that multiples two numbers. Validation is continuous.</p>
                 <p><Source path="Multiplier.tsx"/></p>
                 <Multiplier/>
             </section>
+            
             <section>
                 <h2>Simpsons</h2>
                 <p>A silly example that covers a few interesting scenarios.</p>
