@@ -68,6 +68,8 @@ export interface Adaptor<View, Model> {
 }
 ```
 
+(This is a slight oversimplification as parse may optionally return a `Promise`).
+
 As in React, `render` takes model data and produces view data. But this is a bidirectional operator, so it also has `parse`, which does the reverse.
 
 Note that the return value of `parse` is not just `Model`.
@@ -142,4 +144,3 @@ function ErrorBullets(props: { rule: Rule }) {
     );
 }
 ```
-

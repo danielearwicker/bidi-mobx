@@ -25423,6 +25423,27 @@
 	    return result && "error" in result;
 	}
 	exports.isParseError = isParseError;
+	function isPromiseLike(val) {
+	    return val && typeof val.then === "function";
+	}
+	function asPromiseLike(val) {
+	    if (isPromiseLike(val)) {
+	        return val;
+	    }
+	    var pl = {
+	        then: function (callback) {
+	            return asPromiseLike(callback(val));
+	        },
+	        $promiseImmediateValue: val
+	    };
+	    return pl;
+	}
+	function unpromise(val) {
+	    if ("$promiseImmediateValue" in val) {
+	        return val.$promiseImmediateValue;
+	    }
+	    return val;
+	}
 	var Adaptation = (function () {
 	    function Adaptation(init, label, render, parse) {
 	        var _this = this;
@@ -25430,9 +25451,9 @@
 	        this.render = render;
 	        this.parse = parse;
 	        // Tracks changes made to this.value
-	        this.watchView = function () { return _this.updateFromRendered(_this.view); };
+	        this.watchView = function () { return _this.updateFromView(_this.view); };
 	        // Track changes made to this.model.value
-	        this.watchModel = function () { return _this.updateFromParsed(_this.model); };
+	        this.watchModel = function () { return _this.updateFromModel(_this.model); };
 	        this.model = init;
 	        this.view = this.render(this.model);
 	        this.stopWatchingView = mobx_1.autorun(this.watchView);
@@ -25458,36 +25479,63 @@
 	    Adaptation.prototype.set = function (v) {
 	        this.view = v;
 	    };
-	    Adaptation.prototype.updateFromRendered = function (newRendered) {
-	        var parsed = this.parse(newRendered);
-	        if (isParseError(parsed)) {
-	            this.errors = typeof parsed.error === "string" ? [parsed.error] : parsed.error;
-	        }
-	        else {
-	            this.errors = [];
-	            // Round-trip to get a canonical view for comparison
-	            var roundTrippedParsed = this.render(parsed.value);
-	            var view = this.render(this.model);
-	            if (roundTrippedParsed !== view) {
-	                this.model = parsed.value;
+	    Adaptation.prototype.updateFromView = function (newRendered) {
+	        var _this = this;
+	        this.continue(this.parse(newRendered), function (parsed) {
+	            if (isParseError(parsed)) {
+	                _this.errors = typeof parsed.error === "string" ? [parsed.error] : parsed.error;
 	            }
-	        }
+	            else {
+	                _this.errors = [];
+	                // Round-trip to get a canonical view for comparison
+	                var roundTrippedParsed = _this.render(parsed.value);
+	                var view = _this.render(_this.model);
+	                if (roundTrippedParsed !== view) {
+	                    _this.model = parsed.value;
+	                }
+	            }
+	        });
 	    };
-	    Adaptation.prototype.updateFromParsed = function (newParsed) {
+	    Adaptation.prototype.updateFromModel = function (newParsed) {
+	        var _this = this;
 	        var newRendered = this.render(newParsed);
 	        // Round-trip to get a canonical value for comparison
-	        var model = this.parse(this.view);
-	        if (isParseError(model)) {
-	            // Not currently valid, so just accept better replacement
-	            this.view = newRendered;
-	            this.model = newParsed;
+	        this.continue(this.parse(this.view), function (model) {
+	            if (isParseError(model)) {
+	                // Not currently valid, so just accept better replacement
+	                _this.view = newRendered;
+	                _this.model = newParsed;
+	            }
+	            else {
+	                var roundTripped = _this.render(model.value);
+	                // Only if the canonical representation has changed
+	                if (newRendered !== roundTripped) {
+	                    _this.view = newRendered;
+	                }
+	            }
+	        });
+	    };
+	    Adaptation.prototype.continue = function (promiseOrResult, continuation) {
+	        var _this = this;
+	        if (isPromiseLike(promiseOrResult)) {
+	            if (typeof this.continuationVersion === "undefined") {
+	                this.continuationVersion = 0;
+	            }
+	            else {
+	                this.continuationVersion++;
+	            }
+	            var version_1 = this.continuationVersion;
+	            this.running = promiseOrResult
+	                .then(null, function (e) { return ({ error: e.message || "Unknown error" }); })
+	                .then(function (result) {
+	                if (_this.continuationVersion == version_1) {
+	                    mobx_1.runInAction(function () { return continuation(result); });
+	                }
+	                _this.running = undefined;
+	            });
 	        }
 	        else {
-	            var roundTripped = this.render(model.value);
-	            // Only if the canonical representation has changed
-	            if (newRendered !== roundTripped) {
-	                this.view = newRendered;
-	            }
+	            continuation(promiseOrResult);
 	        }
 	    };
 	    return Adaptation;
@@ -25506,10 +25554,10 @@
 	], Adaptation.prototype, "set", null);
 	__decorate([
 	    mobx_1.action
-	], Adaptation.prototype, "updateFromRendered", null);
+	], Adaptation.prototype, "updateFromView", null);
 	__decorate([
 	    mobx_1.action
-	], Adaptation.prototype, "updateFromParsed", null);
+	], Adaptation.prototype, "updateFromModel", null);
 	function field(inner) {
 	    function also(outer) {
 	        function render(m) {
@@ -25517,11 +25565,12 @@
 	        }
 	        ;
 	        function parse(v) {
-	            var result = outer.parse(v);
-	            if (isParseError(result)) {
-	                return result;
-	            }
-	            return inner.parse(result.value);
+	            return unpromise(asPromiseLike(outer.parse(v)).then(function (result) {
+	                if (isParseError(result)) {
+	                    return result;
+	                }
+	                return inner.parse(result.value);
+	            }));
 	        }
 	        ;
 	        return field({ render: render, parse: parse });
