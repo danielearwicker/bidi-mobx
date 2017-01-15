@@ -6,3 +6,6 @@ Two-way binding is back, and this time it's respectable
 
 # Background Notes
 [Somewhat rambling](https://github.com/danielearwicker/bidi-mobx/blob/master/notes.md)
+
+# License 
+MIT
