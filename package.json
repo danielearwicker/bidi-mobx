@@ -1,6 +1,6 @@
 {
   "name": "bidi-mobx",
-  "version": "0.12.0",
+  "version": "0.12.1",
   "description": "Two-way binding is back, and this time it's respectable",
   "main": "built/index.js",
   "types": "built/index.d.ts",
@@ -9,7 +9,7 @@
     "test": "tape built/test/**/*.js",
     "coverage": "istanbul cover tape built/test/**/*.js",
     "all": "npm run build && npm run test && npm run coverage",
-    "prepublish": "npm run build && npm run test",
+    "prepublish": "npm run build && npm run test && node build-docs.js",
     "watch": "webpack -w"
   },
   "repository": {
