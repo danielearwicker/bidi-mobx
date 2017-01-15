@@ -25400,7 +25400,7 @@
 	    if (errs.length != 0) {
 	        var prefix = className ? (className + " ") : "", suffix = props.errorClass || "has-errors";
 	        className = "" + prefix + suffix;
-	        title += "\n" + errs.join("\n");
+	        title = (title ? title + "\n" : "") + errs.join("\n");
 	    }
 	    return { className: className, title: title };
 	}
