@@ -25426,6 +25426,11 @@
 	function isPromiseLike(val) {
 	    return val && typeof val.then === "function";
 	}
+	/**
+	 * Minimal conversion optional promise into definite promise. Except we
+	 * release Zalgo! If nothing asynchronous is involved then we want true
+	 * synchronous (nested stack traces etc.) - see unpromise.
+	 */
 	function asPromiseLike(val) {
 	    if (isPromiseLike(val)) {
 	        return val;
@@ -25438,11 +25443,27 @@
 	    };
 	    return pl;
 	}
+	/**
+	 * Turns a definite promise into an optional promise; if it's a plain
+	 * value previously wrapped by asPromiseLike then it can become that
+	 * plain value.
+	 */
 	function unpromise(val) {
 	    if ("$promiseImmediateValue" in val) {
 	        return val.$promiseImmediateValue;
 	    }
 	    return val;
+	}
+	function getErrorMessage(e) {
+	    if (e && e.message) {
+	        return e.message;
+	    }
+	    try {
+	        return JSON.stringify(e);
+	    }
+	    catch (x) {
+	        return x.message || "Unknown error";
+	    }
 	}
 	var Adaptation = (function () {
 	    function Adaptation(init, label, render, parse) {
@@ -25526,7 +25547,7 @@
 	            }
 	            var version_1 = this.continuationVersion;
 	            this.running = promiseOrResult
-	                .then(null, function (e) { return ({ error: e.message || "Unknown error" }); })
+	                .then(null, function (e) { return ({ error: getErrorMessage(e) }); })
 	                .then(function (result) {
 	                if (_this.continuationVersion == version_1) {
 	                    mobx_1.runInAction(function () { return continuation(result); });
