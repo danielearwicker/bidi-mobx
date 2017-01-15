@@ -21536,13 +21536,12 @@
 	var field_1 = __webpack_require__(183);
 	var TextInput_1 = __webpack_require__(184);
 	var RuleBullets_1 = __webpack_require__(186);
-	var factor = field_1.field(field_1.numberLimits(1, 10)).also(field_1.numberAsString(2));
-	var NumberEditor = (function (_super) {
+	var NumberEditor = NumberEditor_1 = (function (_super) {
 	    __extends(NumberEditor, _super);
 	    function NumberEditor() {
 	        var _this = _super !== null && _super.apply(this, arguments) || this;
-	        _this.a = factor.create(1, "A");
-	        _this.b = factor.create(2, "B");
+	        _this.a = NumberEditor_1.factor.create(1, "A");
+	        _this.b = NumberEditor_1.factor.create(12, "B");
 	        _this.limit = rules_1.rule(function () {
 	            return (_this.a.model + _this.b.model > 10) ?
 	                "Total " + _this.a.model + " + " + _this.b.model + " is too big" : [];
@@ -21574,14 +21573,16 @@
 	    };
 	    return NumberEditor;
 	}(React.Component));
+	NumberEditor.factor = field_1.field(field_1.numberLimits(1, 10)).also(field_1.numberAsString(2));
 	__decorate([
 	    mobx_1.computed
 	], NumberEditor.prototype, "product", null);
-	NumberEditor = __decorate([
+	NumberEditor = NumberEditor_1 = __decorate([
 	    mobx_react_1.observer
 	], NumberEditor);
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.default = NumberEditor;
+	var NumberEditor_1;
 
 
 /***/ },
