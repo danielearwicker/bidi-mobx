@@ -8,7 +8,7 @@ This is all very well for something like an animation that you sit passively and
 
 But in an interactive UI, the user sends signals to the UI, working with the outermost layer that they can see. In other words, if you’ve transformed the data into view state, the user is directly manipulating the view state, which then needs to be translated back into model state.
 
-“Oh no,” you cry, instinctively. “I create actions that manipulate the underlying model state directly. It’s fine.”
+"Oh no," you cry, instinctively. "I create actions that manipulate the underlying model state directly. It’s fine."
 
 No, you don’t - or if you do, it's because you happen to be encountering only easy problems. To make this absolutely clear, let’s consider the actual distinction between model and view.
 
@@ -45,15 +45,101 @@ So when we have a model that cannot represent all the states that its view will 
 
 There may be more than one way of interacting with a model. Each has a different view design, which requires different view state to support it. So it is clear that view state is a different thing from model state.
 
-## Cross-value validation
+## Representing a field
 
-In some models the validity of each field cannot be determined independently. They can be entangled. Consider a model with two numbers, `a` and `b`, whose total must be less than 10. If we set them both to `4` all is fine. If we set `a` to `5`, still fine. Then we set `b` to `5` also, and that operation will throw an exception explaining the problem.
+We typically break the view state down into named fields. A field has two representations: model and view. These may be different data types entirely. If the field is a number that we want to tie to a text input, then the model is a number and the view is text.
 
-The problem with this approach is that we could fix the problem by adjusting `a` down to `4`. If we do that, what clears the error state of `b`?
+MobX's low-level pattern for a boxed value, also adopted (for that reason) by the [boxm](https://github.com/danielearwicker/boxm) project, has ordinary `get` and `set` methods. These serve as the external interface to our field, getting/setting the view representation.
 
-This kind of entanglement demonstrates that validation error states (i.e. a pending change attempted by the user that has failed to apply) must be re-attempted whenever when the situation changes. This is *non-locality* and requires "spooky action at a distance" in the UI. Editing field `b` must cause field `a` to apply its change.
+A mutable property called `model` holds the model representation. When this is modified, the view representation is regenerated. Similarly when `set` is called to supply a new view representation, the `model` is updated - though only, of course, if it can be mapped to a valid model state.
 
-Another, less spooky, way to describe this, is that fields `a` and `b` are in fact independently modifiable to any value, and a third value is simply a `computed` that says whether they are in a valid state.
+When the current view state cannot be mapped to a model state, there is a property called `error` that contains an array of strings describing why the view state is not valid.
 
-The idea of the validity of the whole view state may be crucial. Multiple validation rules may be broken by the current state; when none are, it is valid.
+These things update continuously as values change.
+
+## Field adaptation
+
+An *adaptor* is a pair of operations called `render` and `parse`.
+
+```ts
+export interface Adaptor<View, Model> {
+    render(model: Model): View;
+    parse(view: View): ParseResult<Model>;
+}
+```
+
+As in React, `render` takes model data and produces view data. But this is a bidirectional operator, so it also has `parse`, which does the reverse.
+
+Note that the return value of `parse` is not just `Model`.
+
+```ts
+export type ParseResult<T> = { error: string | string[] } | { value: T };
+```
+
+So it can return a value or an error (or multiple errors, which helps with composition). This asymmetry between `parse` and `render` is because there are more view states than model states. `render` must be able to generate a view representation for any model state, but the reverse is not true.
+
+A field definition is built by passing an adaptor to `field`, which returns a builder. It's immutable, so you can stash a definition for reuse. Further adaptors can be composed by calling `also` on the builder. Finally, `create` generates an actual field.
+
+So a number field constrained to the range 1-10:
+
+```ts
+const f = field(numberLimits(1, 10)).create();
+```
+
+But we also want to view it as a string:
+
+```ts
+const f = field(numberLimits(1, 10)).also(numberAsString(2)).create();
+```
+
+Adaptors can be chained together indefinitely. The functions `numberLimits` and `numberAsString` are adaptor generators, i.e. functions that return adaptors.
+
+## Error composition
+
+Because `error` is an array of strings, composition is trivial: the error state of a collection of fields is just the concatenation of all their error states.
+
+An error state, or `rule`, can exist independently of any specific field. It's just any object with an `error` array. This supports cross-field validation:
+
+```ts
+const limit = rule(() => 
+    (a.model + b.model > 10) ? 
+        `Total ${a.model} + ${b.model} is too big` : undefined);
+
+// compose the fields and the limit into a single error state
+const validation = rules([a, b, limit]);
+```
+
+## React components
+
+If a component's props includes:
+
+```ts
+value: BoxedValue<T>;
+```
+
+then it is well suited to direct two-way binding. `T` is the field's `View` type. For some field editing components (most obviously `TextBox`) it makes sense to define it:
+
+```ts
+value: BoxedValue<string> & Rule;
+```
+
+This means that `TextBox` can set its `title` and `className` in response to errors originating in the field, and this provides a simple, automatic validation feedback UI.
+
+The `Rule` interface's `error` property is optional, so `TextBox` can bind to an ordinary `BoxedValue<string>` just fine.
+
+The array of error strings can get messy, containing duplicates or `undefined`, so the `errors` helper accepts a `Rule` and returns a cleaned up array of distinct strings. Therefore:
+
+```ts
+function ErrorBullets(props: { rule: Rule }) {
+    return (
+        <ul>
+        {
+            errors(props.rule).map(error => (
+                <li key={error}>{error}</li>
+            ))
+        }
+        </ul>
+    );
+}
+```
 

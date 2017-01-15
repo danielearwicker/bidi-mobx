@@ -9,13 +9,13 @@ import { field, numberAsString, numberLimits } from "../src/field"
 import TextInput from "../src/components/TextInput";
 import RuleBullets from "../src/components/RuleBullets";
 
-const factor = field(numberLimits(1, 10)).also(numberAsString(2));
-
 @observer
 export default class NumberEditor extends React.Component<{}, {}> {
 
-    private a = factor.create(1, "A");
-    private b = factor.create(2, "B");
+    private static factor = field(numberLimits(1, 10)).also(numberAsString(2));
+
+    private a = NumberEditor.factor.create(1, "A");
+    private b = NumberEditor.factor.create(12, "B");
 
     private limit = rule(() => 
         (this.a.model + this.b.model > 10) ? 
