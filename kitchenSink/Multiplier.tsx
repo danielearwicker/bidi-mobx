@@ -4,16 +4,17 @@ import { computed } from "mobx";
 import { observer } from "mobx-react";
 
 import { rule, rules } from "../src/rules";
-import numberAsString from "../src/numberAsString"
+import { field, numberAsString, numberLimits } from "../src/field"
 
 import TextInput from "../src/components/TextInput";
 import RuleBullets from "../src/components/RuleBullets";
 
-const factor = numberAsString({ decimalPlaces: 2, minimum: 1, maximum: 10 });
+const factor = field(numberLimits(1, 10)).also(numberAsString(2));
 
 function makeViewState() {
 
-    const a = factor(1, "A"), b = factor(2, "B");
+    const a = factor.create(1, "A"), 
+          b = factor.create(2, "B");
 
     const limit = rule(() => (a.model + b.model > 10) ? 
                     `Total ${a.model} + ${b.model} is too big` : []);
