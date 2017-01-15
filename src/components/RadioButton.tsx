@@ -10,7 +10,7 @@ export interface RadioButtonProps<T> extends FormElementProps {
 }
 
 @observer
-export class TypedRadioButton<T> extends React.Component<RadioButtonProps<T>, {}> {
+export default class TypedRadioButton<T> extends React.Component<RadioButtonProps<T>, {}> {
 
     @action.bound
     changed(ev: React.FormEvent<HTMLInputElement>) {

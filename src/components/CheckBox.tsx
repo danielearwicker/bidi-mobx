@@ -9,7 +9,7 @@ export interface CheckBoxProps extends FormElementProps {
 }
 
 @observer
-export class CheckBox extends React.Component<CheckBoxProps, {}> {
+export default class CheckBox extends React.Component<CheckBoxProps, {}> {
 
     indeterminate = (input: HTMLInputElement) => {
         if (input) {

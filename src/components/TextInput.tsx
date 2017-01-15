@@ -3,6 +3,7 @@ import { action } from "mobx";
 import { observer } from "mobx-react";
 import { BoxedValue } from "boxm";
 import { FormElementProps, removeProps } from "./FormElementProps";
+import * as Rules from "../rules"
 
 export type AutoComplete = "off"|"on"|"name"|"honorific-prefix"|"given-name"|"additional-name"|
         "family-name"|"honorific-suffix"|"nickname"|"email"|"username"|"new-password"|
@@ -33,22 +34,24 @@ export interface StandardTextInputProps extends FormElementProps {
 }
 
 export interface TextInputProps extends StandardTextInputProps {
-    value: BoxedValue<string>;
+    value: BoxedValue<string> & Rules.Rule;
+    errorClass?: string;
 }
 
 @observer
-export class TextInput extends React.Component<TextInputProps, {}> {
+export default class TextInput extends React.Component<TextInputProps, {}> {
 
     @action.bound
     changed(e: React.FormEvent<HTMLInputElement>) {
         this.props.value.set(e.currentTarget.value);
     }
 
-    render() {
+    render() {        
         return (
             <input type="text" 
                 {...removeProps(this.props, "value")} 
-                value={this.props.value.get()}
+                {...Rules.props(this.props.value, this.props)}
+                value={this.props.value.get()}                
                 onChange={this.changed} />
         );
     }

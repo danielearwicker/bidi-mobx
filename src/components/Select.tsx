@@ -13,7 +13,7 @@ export interface SelectProps<T> extends FormElementProps {
 }
 
 @observer
-export class TypedSelect<T> extends React.Component<SelectProps<T>, {}> {
+export default class TypedSelect<T> extends React.Component<SelectProps<T>, {}> {
 
     static defaultLabels(value: any) {
         return value + "";
