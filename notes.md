@@ -72,7 +72,7 @@ export interface Adaptor<View, Model> {
 
 As in React, `render` takes model data and produces view data. But this is a bidirectional operator, so it also has `parse`, which does the reverse.
 
-Note that although the return value of `parse` is `Model`, exceptions are expected and these convey a problem in parsing. There is a dedicated exception type `ValidationError` but in fact any exception will do.
+Note that although the return value of `parse` is `Model`, exceptions are expected and these convey a problem in parsing. There is a dedicated exception type `ValidationError` but in fact any exception will do. Conversely, `render` is *not* expected to produce exceptions - it's supposed to just work.
 
 So `parse` can return a value or an error (or multiple errors, which helps with composition). This asymmetry between `parse` and `render` is because there are more view states than model states. `render` must be able to generate a view representation for any model state, but the reverse is not true.
 
@@ -131,12 +131,9 @@ The array of error strings can get messy, containing duplicates or `undefined`, 
 function ErrorBullets(props: { rule: Rule }) {
     return (
         <ul>
-        {
-            errors(props.rule).map(error => (
-                <li key={error}>{error}</li>
-            ))
-        }
+        { errors(props.rule).map(error => <li key={error}>{error}</li>) }
         </ul>
     );
 }
 ```
+
