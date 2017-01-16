@@ -107,14 +107,14 @@ Somewhat experimental: haven't exposed a way to set throttling yet, also why not
 # Prior Art
 From [Knockout.js](http://knockoutjs.com) comes the idea of including a minimal set of primitives for handling the DOM's form fields, but making them so simple that they also work as examples for user-written controls (e.g. integrating with your favourite date picker).
 
-I looked properly at [FormState](https://formstate.github.io) as I was thinking through the validation/conversion approach. Main similarities:
+I looked properly at [FormState](https://formstate.github.io) :rose: as I was thinking through the validation/conversion approach. Main similarities:
 
 * Representing each field's view state with an object containing model and view as separate values (equivalent of `model` is called `$`)
 * Validation rules can added to a field
 * Fields can be aggregated into one object to check validation of all
 
 Main differences:
-* Model and view state are the same type (validation only, not conversion)
+* Model and view state are the same type (validation only, no conversion or adaptor chaining)
 * Has separate `value` and `onChange` features instead of a single `BoxedValue`
 * Validation is an explicitly requested command, not continuously reevaluated
 
