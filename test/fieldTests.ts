@@ -1,6 +1,6 @@
 import * as test from "blue-tape";
 
-import { field, numberLimits, numberAsString, stringLimits, identity, checker, ParseResult } from "../src/field"
+import { field, numberLimits, numberAsString, stringLimits, identity, checker } from "../src/field"
 import { errors } from "../src/rules";
 
 test("Field identity", t => {
@@ -98,14 +98,14 @@ const delay = {
         return str;
     },
     parse(value: string) {
-        return new Promise<ParseResult<string>>(
+        return new Promise<string>(
             (resolve, reject) => setTimeout(() => {
                 if (value === "error1") {
                     reject(new Error("errmsg"));
                 } else if (value === "error2") {
                     reject({ badError: true });
                 } else {
-                    resolve({ value });
+                    resolve(value);
                 }
             }, 100)
         );

@@ -25419,50 +25419,29 @@
 	    return c > 3 && r && Object.defineProperty(target, key, r), r;
 	};
 	var mobx_1 = __webpack_require__(180);
-	function isParseError(result) {
-	    return result && "error" in result;
-	}
-	exports.isParseError = isParseError;
 	function isPromiseLike(val) {
 	    return val && typeof val.then === "function";
 	}
-	/**
-	 * Minimal conversion optional promise into definite promise. Except we
-	 * release Zalgo! If nothing asynchronous is involved then we want true
-	 * synchronous (nested stack traces etc.) - see unpromise.
-	 */
-	function asPromiseLike(val) {
-	    if (isPromiseLike(val)) {
-	        return val;
+	var ValidationError = (function () {
+	    function ValidationError(errors) {
+	        this.errors = typeof errors === "string" ? [errors] : errors;
+	        this.message = this.errors.join("\n");
 	    }
-	    var pl = {
-	        then: function (callback) {
-	            return asPromiseLike(callback(val));
-	        },
-	        $promiseImmediateValue: val
-	    };
-	    return pl;
-	}
-	/**
-	 * Turns a definite promise into an optional promise; if it's a plain
-	 * value previously wrapped by asPromiseLike then it can become that
-	 * plain value.
-	 */
-	function unpromise(val) {
-	    if ("$promiseImmediateValue" in val) {
-	        return val.$promiseImmediateValue;
+	    return ValidationError;
+	}());
+	exports.ValidationError = ValidationError;
+	function getErrors(e) {
+	    if (e instanceof ValidationError) {
+	        return e.errors;
 	    }
-	    return val;
-	}
-	function getErrorMessage(e) {
 	    if (e && e.message) {
-	        return e.message;
+	        return [e.message];
 	    }
 	    try {
-	        return JSON.stringify(e);
+	        return [JSON.stringify(e)];
 	    }
 	    catch (x) {
-	        return x.message || "Unknown error";
+	        return [x.message || "Unknown error"];
 	    }
 	}
 	var Adaptation = (function () {
@@ -25502,42 +25481,43 @@
 	    };
 	    Adaptation.prototype.updateFromView = function (newRendered) {
 	        var _this = this;
-	        this.continue(this.parse(newRendered), function (parsed) {
-	            if (isParseError(parsed)) {
-	                _this.errors = typeof parsed.error === "string" ? [parsed.error] : parsed.error;
+	        this.parseAndContinue(newRendered, function (model) {
+	            _this.errors = [];
+	            // Round-trip to get a canonical view for comparison
+	            var roundTrippedParsed = _this.render(model);
+	            var view = _this.render(_this.model);
+	            if (roundTrippedParsed !== view) {
+	                _this.model = model;
 	            }
-	            else {
-	                _this.errors = [];
-	                // Round-trip to get a canonical view for comparison
-	                var roundTrippedParsed = _this.render(parsed.value);
-	                var view = _this.render(_this.model);
-	                if (roundTrippedParsed !== view) {
-	                    _this.model = parsed.value;
-	                }
-	            }
-	        });
+	        }, function (errors) { return _this.errors = errors; });
 	    };
 	    Adaptation.prototype.updateFromModel = function (newParsed) {
 	        var _this = this;
 	        var newRendered = this.render(newParsed);
-	        // Round-trip to get a canonical value for comparison
-	        this.continue(this.parse(this.view), function (model) {
-	            if (isParseError(model)) {
-	                // Not currently valid, so just accept better replacement
+	        // Round-trip to get a canonical value for comparison (can't I eliminate this?)
+	        this.parseAndContinue(this.view, function (model) {
+	            var roundTripped = _this.render(model);
+	            // Only if the canonical representation has changed
+	            if (newRendered !== roundTripped) {
 	                _this.view = newRendered;
-	                _this.model = newParsed;
 	            }
-	            else {
-	                var roundTripped = _this.render(model.value);
-	                // Only if the canonical representation has changed
-	                if (newRendered !== roundTripped) {
-	                    _this.view = newRendered;
-	                }
-	            }
+	        }, function (errors) {
+	            // Not currently valid, so just accept better replacement
+	            _this.view = newRendered;
+	            _this.model = newParsed;
+	            errors; // unused
 	        });
 	    };
-	    Adaptation.prototype.continue = function (promiseOrResult, continuation) {
+	    Adaptation.prototype.parseAndContinue = function (view, good, fail) {
 	        var _this = this;
+	        var promiseOrResult;
+	        try {
+	            promiseOrResult = this.parse(view);
+	        }
+	        catch (x) {
+	            fail(getErrors(x));
+	            return;
+	        }
 	        if (isPromiseLike(promiseOrResult)) {
 	            if (typeof this.continuationVersion === "undefined") {
 	                this.continuationVersion = 0;
@@ -25547,16 +25527,20 @@
 	            }
 	            var version_1 = this.continuationVersion;
 	            this.running = promiseOrResult
-	                .then(null, function (e) { return ({ error: getErrorMessage(e) }); })
 	                .then(function (result) {
 	                if (_this.continuationVersion == version_1) {
-	                    mobx_1.runInAction(function () { return continuation(result); });
+	                    mobx_1.runInAction(function () { return good(result); });
+	                }
+	                _this.running = undefined;
+	            }, function (err) {
+	                if (_this.continuationVersion == version_1) {
+	                    mobx_1.runInAction(function () { return fail(getErrors(err)); });
 	                }
 	                _this.running = undefined;
 	            });
 	        }
 	        else {
-	            continuation(promiseOrResult);
+	            good(promiseOrResult);
 	        }
 	    };
 	    return Adaptation;
@@ -25579,6 +25563,34 @@
 	__decorate([
 	    mobx_1.action
 	], Adaptation.prototype, "updateFromModel", null);
+	/**
+	 * Minimal conversion optional promise into definite promise. Except we
+	 * release Zalgo! If nothing asynchronous is involved then we want true
+	 * synchronous (nested stack traces etc.) - see unpromise.
+	 */
+	function asPromiseLike(val) {
+	    if (isPromiseLike(val)) {
+	        return val;
+	    }
+	    var pl = {
+	        then: function (callback) {
+	            return asPromiseLike(callback(val));
+	        },
+	        $promiseImmediateValue: val
+	    };
+	    return pl;
+	}
+	/**
+	 * Turns a definite promise into an optional promise; if it's a plain
+	 * value previously wrapped by asPromiseLike then it can become that
+	 * plain value.
+	 */
+	function unpromise(val) {
+	    if ("$promiseImmediateValue" in val) {
+	        return val.$promiseImmediateValue;
+	    }
+	    return val;
+	}
 	function field(inner) {
 	    function also(outer) {
 	        function render(m) {
@@ -25586,12 +25598,7 @@
 	        }
 	        ;
 	        function parse(v) {
-	            return unpromise(asPromiseLike(outer.parse(v)).then(function (result) {
-	                if (isParseError(result)) {
-	                    return result;
-	                }
-	                return inner.parse(result.value);
-	            }));
+	            return unpromise(asPromiseLike(outer.parse(v)).then(function (result) { return inner.parse(result); }));
 	        }
 	        ;
 	        return field({ render: render, parse: parse });
@@ -25615,9 +25622,9 @@
 	    function parse(str) {
 	        var value = parseFloat(str);
 	        if (isNaN(value) || !pattern.test(str)) {
-	            return { error: "Must be a number" };
+	            throw new ValidationError("Must be a number");
 	        }
-	        return { value: value };
+	        return value;
 	    }
 	    return { render: render, parse: parse };
 	}
@@ -25628,7 +25635,7 @@
 	            return value;
 	        },
 	        parse: function (value) {
-	            return { value: value };
+	            return value;
 	        }
 	    };
 	}
@@ -25640,7 +25647,10 @@
 	        },
 	        parse: function (value) {
 	            var error = check(value);
-	            return error ? { error: error } : { value: value };
+	            if (error) {
+	                throw new ValidationError(error);
+	            }
+	            return value;
 	        }
 	    };
 	}
@@ -25799,7 +25809,7 @@
 	                React.createElement("legend", null, "Simpsons"),
 	                React.createElement(SimpsonsSelectorButtons_1.default, { simpsons: state.filtered, selected: selected }),
 	                React.createElement(SelectSimpson, { options: state.filtered, value: selected, labels: function (s) { return s.name.model; }, keys: function (s) { return s.id; } }))) : undefined,
-	            state.filtered.length && state.selected ? (React.createElement("fieldset", null,
+	            state.filtered.indexOf(state.selected) !== -1 ? (React.createElement("fieldset", null,
 	                React.createElement("legend", null, "Simpson"),
 	                React.createElement(SimpsonEditor_1.default, { simpson: state.selected }))) : undefined));
 	    };
@@ -26200,7 +26210,7 @@
 	        return value.slice(0).sort().join(" ");
 	    },
 	    parse: function (str) {
-	        return { value: str.split(/\s+/).filter(function (s) { return s; }) };
+	        return str.split(/\s+/).filter(function (s) { return s; });
 	    }
 	};
 

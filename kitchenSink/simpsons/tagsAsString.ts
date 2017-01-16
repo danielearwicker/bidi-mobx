@@ -3,6 +3,7 @@ export default {
         return value.slice(0).sort().join(" "); 
     },
     parse(str: string) { 
-        return { value: str.split(/\s+/).filter(s => s) }; }  
+        return str.split(/\s+/).filter(s => s);
+    }
 };
 

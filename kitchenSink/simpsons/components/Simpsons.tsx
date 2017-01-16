@@ -44,7 +44,7 @@ export default class Simpsons extends React.Component<{}, {}> {
                     ) : undefined
                 }
                 {
-                    state.filtered.length && state.selected ? (
+                    state.filtered.indexOf(state.selected) !== -1 ? (
                         <fieldset>
                             <legend>Simpson</legend>
                             <SimpsonEditor simpson={state.selected!} />

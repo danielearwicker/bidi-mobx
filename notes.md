@@ -64,21 +64,17 @@ An *adaptor* is a pair of operations called `render` and `parse`.
 ```ts
 export interface Adaptor<View, Model> {
     render(model: Model): View;
-    parse(view: View): ParseResult<Model>;
+    parse(view: View): Model;
 }
 ```
 
-(This is a slight oversimplification as parse may optionally return a `Promise`).
+(This is a slight oversimplification as parse may optionally return a `Promise<Model>`).
 
 As in React, `render` takes model data and produces view data. But this is a bidirectional operator, so it also has `parse`, which does the reverse.
 
-Note that the return value of `parse` is not just `Model`.
+Note that although the return value of `parse` is `Model`, exceptions are expected and these convey a problem in parsing. There is a dedicated exception type `ValidationError` but in fact any exception will do.
 
-```ts
-export type ParseResult<T> = { error: string | string[] } | { value: T };
-```
-
-So it can return a value or an error (or multiple errors, which helps with composition). This asymmetry between `parse` and `render` is because there are more view states than model states. `render` must be able to generate a view representation for any model state, but the reverse is not true.
+So `parse` can return a value or an error (or multiple errors, which helps with composition). This asymmetry between `parse` and `render` is because there are more view states than model states. `render` must be able to generate a view representation for any model state, but the reverse is not true.
 
 A field definition is built by passing an adaptor to `field`, which returns a builder. It's immutable, so you can stash a definition for reuse. Further adaptors can be composed by calling `also` on the builder. Finally, `create` generates an actual field.
 
