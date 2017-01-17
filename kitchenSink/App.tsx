@@ -28,7 +28,7 @@ export default function App(props: {}) {
             <section>
                 <h2>Simpsons</h2>
                 <p>A silly example that covers a few interesting scenarios.</p>
-                <p><Source path="Simpsons"/></p>
+                <p><Source path="simpsons/components/Simpsons.tsx"/></p>
                 <Simpsons/>
             </section>
 
