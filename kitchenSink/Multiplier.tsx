@@ -33,7 +33,7 @@ export default class NumberEditor extends React.Component<{}, {}> {
             <div>
                 <div><label>A = <TextInput value={a}/></label></div>
                 <div><label>B = <TextInput value={b}/></label></div>
-                <div>Product (a * b) = { product }</div>
+                <div>Product ({a.model} * {b.model}) = { product }</div>
                 <hr/>
                 <RuleBullets rule={validation} />
             </div>
