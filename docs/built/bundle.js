@@ -21566,7 +21566,11 @@
 	                    "B = ",
 	                    React.createElement(TextInput_1.default, { value: b }))),
 	            React.createElement("div", null,
-	                "Product (a * b) = ",
+	                "Product (",
+	                a.model,
+	                " * ",
+	                b.model,
+	                ") = ",
 	                product),
 	            React.createElement("hr", null),
 	            React.createElement(RuleBullets_1.default, { rule: validation })));
@@ -25419,9 +25423,6 @@
 	    return c > 3 && r && Object.defineProperty(target, key, r), r;
 	};
 	var mobx_1 = __webpack_require__(180);
-	function isPromiseLike(val) {
-	    return val && typeof val.then === "function";
-	}
 	var ValidationError = (function () {
 	    function ValidationError(errors) {
 	        this.errors = typeof errors === "string" ? [errors] : errors;
@@ -25446,26 +25447,44 @@
 	}
 	var Adaptation = (function () {
 	    function Adaptation(init, label, render, parse) {
-	        var _this = this;
 	        this.label = label;
 	        this.render = render;
 	        this.parse = parse;
-	        // Tracks changes made to this.value
-	        this.watchView = function () { return _this.updateFromView(_this.view); };
-	        // Track changes made to this.model.value
-	        this.watchModel = function () { return _this.updateFromModel(_this.model); };
-	        this.model = init;
-	        this.view = this.render(this.model);
-	        this.stopWatchingView = mobx_1.autorun(this.watchView);
-	        this.stopWatchingModel = mobx_1.autorun(this.watchModel);
+	        this.modelStore = init;
+	        this.view = render(init);
 	    }
-	    Adaptation.prototype.dispose = function () {
-	        this.stopWatchingView();
-	        this.stopWatchingModel();
-	    };
+	    Object.defineProperty(Adaptation.prototype, "view", {
+	        get: function () {
+	            return this.viewStore;
+	        },
+	        set: function (value) {
+	            this.viewStore = value;
+	            try {
+	                this.modelStore = this.parse(value);
+	                this.errorStore = [];
+	            }
+	            catch (error) {
+	                this.errorStore = getErrors(error);
+	            }
+	        },
+	        enumerable: true,
+	        configurable: true
+	    });
+	    Object.defineProperty(Adaptation.prototype, "model", {
+	        get: function () {
+	            return this.modelStore;
+	        },
+	        set: function (value) {
+	            this.modelStore = value;
+	            this.viewStore = this.render(value);
+	            this.errorStore = [];
+	        },
+	        enumerable: true,
+	        configurable: true
+	    });
 	    Object.defineProperty(Adaptation.prototype, "error", {
 	        get: function () {
-	            return this.errors;
+	            return this.errorStore;
 	        },
 	        enumerable: true,
 	        configurable: true
@@ -25473,124 +25492,35 @@
 	    Adaptation.prototype.get = function () {
 	        return this.view;
 	    };
-	    Adaptation.prototype.toJSON = function () {
-	        return this.model;
-	    };
 	    Adaptation.prototype.set = function (v) {
 	        this.view = v;
 	    };
-	    Adaptation.prototype.updateFromView = function (newRendered) {
-	        var _this = this;
-	        this.parseAndContinue(newRendered, function (model) {
-	            _this.errors = [];
-	            // Round-trip to get a canonical view for comparison
-	            var roundTrippedParsed = _this.render(model);
-	            var view = _this.render(_this.model);
-	            if (roundTrippedParsed !== view) {
-	                _this.model = model;
-	            }
-	        }, function (errors) { return _this.errors = errors; });
-	    };
-	    Adaptation.prototype.updateFromModel = function (newParsed) {
-	        var _this = this;
-	        var newRendered = this.render(newParsed);
-	        // Round-trip to get a canonical value for comparison (can't I eliminate this?)
-	        this.parseAndContinue(this.view, function (model) {
-	            var roundTripped = _this.render(model);
-	            // Only if the canonical representation has changed
-	            if (newRendered !== roundTripped) {
-	                _this.view = newRendered;
-	            }
-	        }, function (errors) {
-	            // Not currently valid, so just accept better replacement
-	            _this.view = newRendered;
-	            _this.model = newParsed;
-	            errors; // unused
-	        });
-	    };
-	    Adaptation.prototype.parseAndContinue = function (view, good, fail) {
-	        var _this = this;
-	        var promiseOrResult;
-	        try {
-	            promiseOrResult = this.parse(view);
-	        }
-	        catch (x) {
-	            fail(getErrors(x));
-	            return;
-	        }
-	        if (isPromiseLike(promiseOrResult)) {
-	            if (typeof this.continuationVersion === "undefined") {
-	                this.continuationVersion = 0;
-	            }
-	            else {
-	                this.continuationVersion++;
-	            }
-	            var version_1 = this.continuationVersion;
-	            this.running = promiseOrResult
-	                .then(function (result) {
-	                if (_this.continuationVersion == version_1) {
-	                    mobx_1.runInAction(function () { return good(result); });
-	                }
-	                _this.running = undefined;
-	            }, function (err) {
-	                if (_this.continuationVersion == version_1) {
-	                    mobx_1.runInAction(function () { return fail(getErrors(err)); });
-	                }
-	                _this.running = undefined;
-	            });
-	        }
-	        else {
-	            good(promiseOrResult);
-	        }
+	    Adaptation.prototype.toJSON = function () {
+	        return this.modelStore;
 	    };
 	    return Adaptation;
 	}());
 	__decorate([
 	    mobx_1.observable
-	], Adaptation.prototype, "model", void 0);
+	], Adaptation.prototype, "modelStore", void 0);
 	__decorate([
 	    mobx_1.observable
-	], Adaptation.prototype, "errors", void 0);
+	], Adaptation.prototype, "viewStore", void 0);
 	__decorate([
 	    mobx_1.observable
-	], Adaptation.prototype, "view", void 0);
+	], Adaptation.prototype, "errorStore", void 0);
+	__decorate([
+	    mobx_1.computed
+	], Adaptation.prototype, "view", null);
+	__decorate([
+	    mobx_1.computed
+	], Adaptation.prototype, "model", null);
+	__decorate([
+	    mobx_1.computed
+	], Adaptation.prototype, "error", null);
 	__decorate([
 	    mobx_1.action
 	], Adaptation.prototype, "set", null);
-	__decorate([
-	    mobx_1.action
-	], Adaptation.prototype, "updateFromView", null);
-	__decorate([
-	    mobx_1.action
-	], Adaptation.prototype, "updateFromModel", null);
-	/**
-	 * Minimal conversion optional promise into definite promise. Except we
-	 * release Zalgo! If nothing asynchronous is involved then we want true
-	 * synchronous (nested stack traces etc.) - see unpromise.
-	 */
-	function asPromiseLike(val) {
-	    if (isPromiseLike(val)) {
-	        return val;
-	    }
-	    var pl = {
-	        then: function (callback) {
-	            return asPromiseLike(callback(val));
-	        },
-	        $promiseImmediateValue: val
-	    };
-	    return pl;
-	}
-	/**
-	 * Turns a definite promise into an optional promise; if it's a plain
-	 * value previously wrapped by asPromiseLike then it can become that
-	 * plain value.
-	 */
-	function unpromise(val) {
-	    if ("$promiseImmediateValue" in val) {
-	        return val.$promiseImmediateValue;
-	    }
-	    return val;
-	}
 	function field(inner) {
 	    function also(outer) {
 	        function render(m) {
@@ -25598,7 +25528,7 @@
 	        }
 	        ;
 	        function parse(v) {
-	            return unpromise(asPromiseLike(outer.parse(v)).then(function (result) { return inner.parse(result); }));
+	            return inner.parse(outer.parse(v));
 	        }
 	        ;
 	        return field({ render: render, parse: parse });
@@ -25754,7 +25684,7 @@
 	var rules_1 = __webpack_require__(182);
 	var mobx_react_1 = __webpack_require__(181);
 	function ErrorBullets(props) {
-	    return (React.createElement("ul", null, rules_1.errors(props.rule).map(function (error) { return (React.createElement("li", { key: error }, error)); })));
+	    return (React.createElement("ul", null, rules_1.errors(props.rule).map(function (error) { return React.createElement("li", { key: error }, error); })));
 	}
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.default = mobx_react_1.observer(ErrorBullets);
@@ -25879,10 +25809,19 @@
 	    TypedSelect.prototype.render = function () {
 	        var labels = this.props.labels || TypedSelect_1.defaultLabels;
 	        var keys = this.props.keys || TypedSelect_1.defaultKeys;
-	        return (React.createElement("select", __assign({}, FormElementProps_1.removeProps(this.props, "value", "options", "labels", "keys", "size"), { value: keys(this.props.value.get()), onChange: this.updateValue }), this.props.options.map(function (option) {
-	            var val = keys(option);
-	            return React.createElement("option", { key: val, value: val }, labels(option));
-	        })));
+	        var selectedValue = this.props.value.get();
+	        var selectedKey = keys(selectedValue);
+	        var options = this.props.options.map(function (option) { return ({
+	            key: keys(option),
+	            label: labels(option)
+	        }); });
+	        if (!options.some(function (option) { return option.key === selectedKey; })) {
+	            options = options.concat({
+	                key: selectedKey,
+	                label: labels(selectedValue)
+	            });
+	        }
+	        return (React.createElement("select", __assign({}, FormElementProps_1.removeProps(this.props, "value", "options", "labels", "keys", "size"), { value: selectedKey, onChange: this.updateValue }), options.map(function (option) { return React.createElement("option", { key: option.key, value: option.key }, option.label); })));
 	    };
 	    return TypedSelect;
 	}(React.Component));
@@ -25999,7 +25938,7 @@
 	    function ViewState() {
 	        var _this = this;
 	        this.simpsons = data_1.default.map(function (s, i) { return new Simpson_1.default(i + "", s.name, s.age, s.tags); });
-	        this.selected = this.simpsons[0];
+	        this.selected = new Simpson_1.default("", "(None)", 0, []);
 	        this.allTags = new mapped_array_mobx_1.MappedArray(function () { return _this.allTagNames; }, function (t) { return t; }, function (t) { return new TagState_1.default(t); });
 	    }
 	    Object.defineProperty(ViewState.prototype, "allTagNames", {
@@ -26210,7 +26149,7 @@
 	        return value.slice(0).sort().join(" ");
 	    },
 	    parse: function (str) {
-	        return str.split(/\s+/).filter(function (s) { return s; });
+	        return str.split(/\s+/).filter(function (s) { return s; }).sort();
 	    }
 	};
 
