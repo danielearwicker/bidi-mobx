@@ -43,15 +43,27 @@ export default class TypedSelect<T> extends React.Component<SelectProps<T>, {}> 
         const labels = this.props.labels || TypedSelect.defaultLabels;
         const keys = this.props.keys || TypedSelect.defaultKeys;
 
+        var selectedValue = this.props.value.get();
+        var selectedKey = keys(selectedValue);
+
+        let options = this.props.options.map(option => ({
+            key: keys(option),
+            label: labels(option)
+        }));
+
+        if (!options.some(option => option.key === selectedKey)) {
+            options = options.concat({
+                key: selectedKey,
+                label: labels(selectedValue)
+            });
+        }
+
         return ( 
             <select {...removeProps(this.props, "value", "options", "labels", "keys", "size")}
-                        value={keys(this.props.value.get())} 
-                        onChange={this.updateValue}>
+                    value={selectedKey} 
+                    onChange={this.updateValue}>
             {
-                this.props.options.map(option => {
-                    const val = keys(option);
-                    return <option key={val} value={val}>{labels(option)}</option>
-                })
+                options.map(option => <option key={option.key} value={option.key}>{option.label}</option>)
             }
             </select>
         );

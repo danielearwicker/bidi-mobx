@@ -68,8 +68,6 @@ export interface Adaptor<View, Model> {
 }
 ```
 
-(This is a slight oversimplification as parse may optionally return a `Promise<Model>`).
-
 As in React, `render` takes model data and produces view data. But this is a bidirectional operator, so it also has `parse`, which does the reverse.
 
 Note that although the return value of `parse` is `Model`, exceptions are expected and these convey a problem in parsing. There is a dedicated exception type `ValidationError` but in fact any exception will do. Conversely, `render` is *not* expected to produce exceptions - it's supposed to just work.

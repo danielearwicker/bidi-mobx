@@ -12,7 +12,7 @@ function overlapping<T>(a: T[], b: T[]) {
 export default class ViewState {
     
     @observable simpsons = data.map((s, i) => new Simpson(i + "", s.name, s.age, s.tags));
-    @observable selected: Simpson = this.simpsons[0];
+    @observable selected = new Simpson("", "(None)", 0, []);
 
     @computed get allTagNames() {        
         const result: { [name: string]: boolean } = {};

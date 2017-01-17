@@ -84,7 +84,7 @@ The argument to `field` and `also` is an adaptor:
 ```ts
 export interface Adaptor<View, Model> {
     render(model: Model): View;
-    parse(view: View): Model | PromiseLike<Model>;
+    parse(view: View): Model;
 }
 ```
 
@@ -101,8 +101,8 @@ export function numberLimits(min: number, max: number) {
 }
 ```
 
-## Promises
-Somewhat experimental: haven't exposed a way to set throttling yet, also why not support it for `render` as well?
+## Asynchronicity
+The approach taken here is in line with MobX's general approach: synchronous updating and no staleness. If asynchronous validation rules are required, this can be achieved quite easily by defining a `rule` based off the value of a `computedAsync` - see [computed-async-mobx](https://github.com/danielearwicker/computed-async-mobx).
 
 # Prior Art
 From [Knockout.js](http://knockoutjs.com) comes the idea of including a minimal set of primitives for handling the DOM's form fields, but making them so simple that they also work as examples for user-written controls (e.g. integrating with your favourite date picker).

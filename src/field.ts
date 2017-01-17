@@ -31,68 +31,48 @@ function getErrors(e: any) {
     }
 }
 
-const enum AdaptationMode { view, model };
-
-function isError<T>(
-    val: { value: T } | { error: any }
-): val is { error: any } {
-    return "error" in val;
-}
-
 class Adaptation<View, Model> implements Field<View, Model> {
 
     @observable modelStore: Model;
     @observable viewStore: View;
-    @observable mode = AdaptationMode.model;
-    
+    @observable errorStore: string[];
+
     constructor(init: Model,
         public label: string | undefined,        
         private render: (view: Model) => View,
         private parse: (str: View) => Model
     ) {
         this.modelStore = init;
-        this.viewStore = render(init);
-    }
-
-    @computed get viewFromModel(): View {        
-        return this.render(this.modelStore);
-    }
-
-    @computed get modelFromView(): ({ value: Model } | { error: any }) {
-        try {
-            return { value: this.parse(this.viewStore) };
-        } catch (error) {
-            return { error };
-        }
+        this.view = render(init);
     }
 
     @computed
     get view() {
-        return this.mode === AdaptationMode.view
-            ? this.viewStore
-            : this.viewFromModel;
+        return this.viewStore;
     }
     set view(value: View) {
         this.viewStore = value;
-        this.mode = AdaptationMode.view;
+        try {
+            this.modelStore = this.parse(value);
+            this.errorStore = [];
+        } catch (error) {
+            this.errorStore = getErrors(error);
+        }
     }
 
     @computed
     get model() {
-        const modelFromView = this.modelFromView;
-        return this.mode === AdaptationMode.model || isError(modelFromView) 
-            ? this.modelStore 
-            : modelFromView.value!;
+        return this.modelStore;
     }
     set model(value: Model) {
         this.modelStore = value;
-        this.mode = AdaptationMode.model;
+        this.viewStore = this.render(value);
+        this.errorStore = [];
     }
 
     @computed
     get error(): string[] {
-        const modelFromView = this.modelFromView;
-        return modelFromView && isError(modelFromView) ? getErrors(modelFromView.error) : []
+        return this.errorStore;
     }
 
     get() {
