@@ -4,6 +4,58 @@ Two-way binding is back, and this time it's respectable
 [![Build Status](https://travis-ci.org/danielearwicker/bidi-mobx.svg?branch=master)](https://travis-ci.org/danielearwicker/bidi-mobx)
 [![Coverage Status](https://coveralls.io/repos/danielearwicker/bidi-mobx/badge.svg?branch=master&service=github)](https://coveralls.io/github/danielearwicker/bidi-mobx?branch=master)
 
+Declare your view model:
+
+```ts
+export default class Person {
+
+    name = field(stringLimits(1, 20)).create("", "Name")
+    age = field(numberLimits(0, 120)).also(numberAsString(0)).create(0, "Age");
+    tags = field(tagsAsString).create([], "Tags");
+
+    rule = rules([this.name, this.age, this.tags]);
+}
+```
+
+Bind your view to it:
+
+```tsx
+function PersonEditor({ person }: { person: Person }) {
+
+    return (
+        <div>
+            <div><label>Name <TextInput value={person.name} /></label></div>
+            <div><label>Age <TextInput value={person.age} /></label></div>
+            <div><label>Tags <TextInput value={person.tags} /></label></div>
+
+            <RuleBullets rule={person.rule}/>
+        </div>
+    );
+}
+```
+
+Use binding-ready simple form components:
+
+* `<CheckBox>`
+* `<RadioButton>` 
+* `<Select>` 
+* `<TextInput>`
+
+Create your own two-way value adaptors:
+
+```ts
+const tagsAsString = {
+    render(value: string[]) { 
+        return value.slice(0).sort().join(" "); 
+    },
+    parse(str: string) { 
+        return str.split(/\s+/).filter(s => s).sort();
+    }
+};
+```
+
+And then chain them together to create fields that automatically convert both directions, applying validations and converting between *model* and *view* representations.
+
 ## Kitchen sink demo
 Gradually growing... [click here](https://danielearwicker.github.io/bidi-mobx/)
 
@@ -29,7 +81,7 @@ To this we add a small set of core form components, which are extremely thin wra
 * `<Select>` -> `<select>` and `<option>` [source](src/components/Select.tsx)
 * `<TextInput>` -> `<input type="text">` [source](src/components/TextInput.tsx)
 
-All these do is provide a `value` property that is a `BoxedValue`. A bunch of noise disappears from your JSX and your UI becomes more readable and understandable.
+All these require a `value` prop that is a `BoxedValue`. A bunch of noise disappears from your JSX and your UI becomes more readable and understandable.
 
 Finally, we provide a simple way to declaratively transform observable values *in both directions*. This enables binding a `TextInput` to a number, or any kind of validation, with very short neat declarations. There's also a [ridiculously simple component](src/components/RuleBullets.tsx) to display validation problems (so simple that you could easily cook up your own variant if you want a different structure).
 
@@ -58,7 +110,7 @@ It also has a sub-property (observable) called `model` that contains the number 
 
 In addition, it has an observable property called `errors` that contains an array of strings; if all is well, this array is empty. If the current text input is not valid, `errors` will contain one or more messages complaining to the user.
 
-Whenever the text or the `model` value changes, everything updates automatically. By default, it updates *synchronously*, like MobX itself, so call-stack debugging is manageable.
+Whenever the text or the `model` value changes, everything updates automatically. It updates *synchronously*, like MobX itself, so call-stack debugging is manageable.
 
 There is some built-in magic in `<TextInput>` so it recognises when an `errors` property is available and can add a class (by default `has-errors`) and append to the `title` to get a tooltip, so this may be enough by itself.
 
