@@ -26442,10 +26442,10 @@
 	};
 	var React = __webpack_require__(1);
 	var mobx_1 = __webpack_require__(180);
-	var mobx_react_1 = __webpack_require__(181);
 	var box_1 = __webpack_require__(189);
 	var rules_1 = __webpack_require__(182);
 	var field_1 = __webpack_require__(183);
+	var project_1 = __webpack_require__(204);
 	var TextInput_1 = __webpack_require__(184);
 	var RuleBullets_1 = __webpack_require__(186);
 	// Underlying everything is a very pure unadorned MobX model
@@ -26483,55 +26483,35 @@
 	__decorate([
 	    mobx_1.computed
 	], Model.prototype, "invalid", null);
-	// This is what the model is wrapped in to support the editing UI
-	var ViewModel = (function () {
-	    function ViewModel(model) {
-	        this.model = model;
-	        var _a = box_1.box(model), a = _a.a, b = _a.b;
-	        this.a = ViewModel.factor.use(a, "A");
-	        this.b = ViewModel.factor.use(b, "B");
-	        this.validation = rules_1.rules([this.a, this.b, rules_1.rule(function () { return model.invalid; })]);
-	    }
-	    return ViewModel;
-	}());
-	ViewModel.factor = field_1.field(field_1.numberLimits(1, 10)).also(field_1.numberAsString(2));
-	// given a model in props, wraps it and presents it
-	var Multiplier = (function (_super) {
-	    __extends(Multiplier, _super);
-	    function Multiplier(props) {
-	        var _this = _super.call(this, props) || this;
-	        _this.viewModel = new ViewModel(props.model);
-	        return _this;
-	    }
-	    Multiplier.prototype.componentWillReceiveProps = function (nextProps) {
-	        this.viewModel = new ViewModel(nextProps.model);
-	    };
-	    Multiplier.prototype.render = function () {
-	        var _a = this.viewModel, a = _a.a, b = _a.b, validation = _a.validation, product = _a.model.product;
-	        return (React.createElement("div", null,
-	            React.createElement("div", null,
-	                React.createElement("label", null,
-	                    "A = ",
-	                    React.createElement(TextInput_1.default, { value: a }))),
-	            React.createElement("div", null,
-	                React.createElement("label", null,
-	                    "B = ",
-	                    React.createElement(TextInput_1.default, { value: b }))),
-	            React.createElement("div", null,
-	                "Product (",
-	                a.model,
-	                " * ",
-	                b.model,
-	                ") = ",
-	                product),
-	            React.createElement("hr", null),
-	            React.createElement(RuleBullets_1.default, { rule: validation })));
-	    };
-	    return Multiplier;
-	}(React.Component));
-	Multiplier = __decorate([
-	    mobx_react_1.observer
-	], Multiplier);
+	// Build a component that renders our model, first by projecting it into a view-model
+	var Multiplier = project_1.project(function (model) {
+	    var factor = field_1.field(field_1.numberLimits(1, 10)).also(field_1.numberAsString(2));
+	    var a = factor.use(box_1.box(model).a, "A"), b = factor.use(box_1.box(model).b, "B"), validation = rules_1.rules([a, b, rules_1.rule(function () { return model.invalid; })]);
+	    return { a: a, b: b, validation: validation }; // this is the view-model that will actually be rendered
+	}).render(function (props) {
+	    // The model and view props are automatically blended into whatever
+	    // we require (as specified in the type argument to `render`)
+	    var _a = props.view, a = _a.a, b = _a.b, validation = _a.validation;
+	    var product = props.model.product;
+	    return (React.createElement("div", { style: { background: props.background } },
+	        React.createElement("div", null,
+	            React.createElement("label", null,
+	                "A = ",
+	                React.createElement(TextInput_1.default, { value: a }))),
+	        React.createElement("div", null,
+	            React.createElement("label", null,
+	                "B = ",
+	                React.createElement(TextInput_1.default, { value: b }))),
+	        React.createElement("div", null,
+	            "Product (",
+	            a.model,
+	            " * ",
+	            b.model,
+	            ") = ",
+	            product.toFixed(2)),
+	        React.createElement("hr", null),
+	        React.createElement(RuleBullets_1.default, { rule: validation })));
+	});
 	// As a demo, show two UIs bound to the same model
 	var TwinMultiplier = (function (_super) {
 	    __extends(TwinMultiplier, _super);
@@ -26542,15 +26522,63 @@
 	    }
 	    TwinMultiplier.prototype.render = function () {
 	        return (React.createElement("div", null,
-	            React.createElement("div", { className: "leftMultiplier" },
-	                React.createElement(Multiplier, { model: this.model })),
-	            React.createElement("div", { className: "rightMultiplier" },
-	                React.createElement(Multiplier, { model: this.model }))));
+	            React.createElement("div", { className: "multiplier" },
+	                React.createElement(Multiplier, { model: this.model, background: "#0FB" })),
+	            React.createElement("div", { className: "multiplier" },
+	                React.createElement(Multiplier, { model: this.model, background: "#0BF" }))));
 	    };
 	    return TwinMultiplier;
 	}(React.Component));
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.default = TwinMultiplier;
+
+
+/***/ },
+/* 204 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __extends = (this && this.__extends) || function (d, b) {
+	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+	    function __() { this.constructor = d; }
+	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	};
+	var __assign = (this && this.__assign) || Object.assign || function(t) {
+	    for (var s, i = 1, n = arguments.length; i < n; i++) {
+	        s = arguments[i];
+	        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+	            t[p] = s[p];
+	    }
+	    return t;
+	};
+	var React = __webpack_require__(1);
+	var mobx_react_1 = __webpack_require__(181);
+	function project(projection) {
+	    return {
+	        render: function (render) {
+	            return mobx_react_1.observer((function (_super) {
+	                __extends(class_1, _super);
+	                function class_1(props) {
+	                    var _this = _super.call(this, props) || this;
+	                    _this.model = props.model;
+	                    _this.view = projection(props.model);
+	                    return _this;
+	                }
+	                class_1.prototype.componentWillReceiveProps = function (props) {
+	                    if (props.model !== this.model) {
+	                        this.model = props.model;
+	                        this.view = projection(props.model);
+	                    }
+	                };
+	                class_1.prototype.render = function () {
+	                    return render(__assign({}, this.props, { view: this.view }));
+	                };
+	                return class_1;
+	            }(React.Component)));
+	        }
+	    };
+	}
+	exports.project = project;
 
 
 /***/ }
