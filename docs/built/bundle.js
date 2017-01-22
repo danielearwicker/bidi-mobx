@@ -21486,6 +21486,7 @@
 	var React = __webpack_require__(1);
 	var Multiplier_1 = __webpack_require__(179);
 	var Simpsons_1 = __webpack_require__(187);
+	var TwinMultiplier_1 = __webpack_require__(203);
 	function Source(prop) {
 	    var url = "https://github.com/danielearwicker/bidi-mobx/blob/master/kitchenSink/" + prop.path;
 	    return React.createElement("a", { href: url }, "Source");
@@ -21506,8 +21507,14 @@
 	            React.createElement("h2", null, "Simpsons"),
 	            React.createElement("p", null, "A silly example that covers a few interesting scenarios."),
 	            React.createElement("p", null,
-	                React.createElement(Source, { path: "Simpsons" })),
-	            React.createElement(Simpsons_1.default, null))));
+	                React.createElement(Source, { path: "simpsons/components/Simpsons.tsx" })),
+	            React.createElement(Simpsons_1.default, null)),
+	        React.createElement("section", null,
+	            React.createElement("h2", null, "Twin Multiplier"),
+	            React.createElement("p", null, "Two UIs bound to the same underlying data. Note that the inputs are formatted" + " " + "to two decimal places only."),
+	            React.createElement("p", null,
+	                React.createElement(Source, { path: "TwinMultiplier.tsx" })),
+	            React.createElement(TwinMultiplier_1.default, null))));
 	}
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.default = App;
@@ -21536,12 +21543,12 @@
 	var field_1 = __webpack_require__(183);
 	var TextInput_1 = __webpack_require__(184);
 	var RuleBullets_1 = __webpack_require__(186);
-	var NumberEditor = NumberEditor_1 = (function (_super) {
-	    __extends(NumberEditor, _super);
-	    function NumberEditor() {
+	var Multiplier = Multiplier_1 = (function (_super) {
+	    __extends(Multiplier, _super);
+	    function Multiplier() {
 	        var _this = _super !== null && _super.apply(this, arguments) || this;
-	        _this.a = NumberEditor_1.factor.create(1, "A");
-	        _this.b = NumberEditor_1.factor.create(12, "B");
+	        _this.a = Multiplier_1.factor.create(1, "A");
+	        _this.b = Multiplier_1.factor.create(12, "B");
 	        _this.limit = rules_1.rule(function () {
 	            return (_this.a.model + _this.b.model > 10) ?
 	                "Total " + _this.a.model + " + " + _this.b.model + " is too big" : [];
@@ -21549,12 +21556,12 @@
 	        _this.validation = rules_1.rules([_this.a, _this.b, _this.limit]);
 	        return _this;
 	    }
-	    Object.defineProperty(NumberEditor.prototype, "product", {
+	    Object.defineProperty(Multiplier.prototype, "product", {
 	        get: function () { return this.a.model * this.b.model; },
 	        enumerable: true,
 	        configurable: true
 	    });
-	    NumberEditor.prototype.render = function () {
+	    Multiplier.prototype.render = function () {
 	        var _a = this, a = _a.a, b = _a.b, product = _a.product, validation = _a.validation;
 	        return (React.createElement("div", null,
 	            React.createElement("div", null,
@@ -21575,18 +21582,18 @@
 	            React.createElement("hr", null),
 	            React.createElement(RuleBullets_1.default, { rule: validation })));
 	    };
-	    return NumberEditor;
+	    return Multiplier;
 	}(React.Component));
-	NumberEditor.factor = field_1.field(field_1.numberLimits(1, 10)).also(field_1.numberAsString(2));
+	Multiplier.factor = field_1.field(field_1.numberLimits(1, 10)).also(field_1.numberAsString(2));
 	__decorate([
 	    mobx_1.computed
-	], NumberEditor.prototype, "product", null);
-	NumberEditor = NumberEditor_1 = __decorate([
+	], Multiplier.prototype, "product", null);
+	Multiplier = Multiplier_1 = __decorate([
 	    mobx_react_1.observer
-	], NumberEditor);
+	], Multiplier);
 	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = NumberEditor;
-	var NumberEditor_1;
+	exports.default = Multiplier;
+	var Multiplier_1;
 
 
 /***/ },
@@ -25446,7 +25453,8 @@
 	    }
 	}
 	var Adaptation = (function () {
-	    function Adaptation(init, label, render, parse) {
+	    function Adaptation(init, modelBox, label, render, parse) {
+	        this.modelBox = modelBox;
 	        this.label = label;
 	        this.render = render;
 	        this.parse = parse;
@@ -25455,16 +25463,26 @@
 	    }
 	    Object.defineProperty(Adaptation.prototype, "view", {
 	        get: function () {
-	            return this.viewStore;
+	            return !this.modelBox || this.modelBox.get() === this.modelStore
+	                ? this.viewStore
+	                : this.render(this.modelBox.get());
 	        },
 	        set: function (value) {
 	            this.viewStore = value;
 	            try {
 	                this.modelStore = this.parse(value);
 	                this.errorStore = [];
+	                if (this.modelBox) {
+	                    this.modelBox.set(this.modelStore);
+	                }
 	            }
 	            catch (error) {
-	                this.errorStore = getErrors(error);
+	                if (error instanceof ValidationError) {
+	                    this.errorStore = getErrors(error);
+	                }
+	                else {
+	                    throw error;
+	                }
 	            }
 	        },
 	        enumerable: true,
@@ -25472,9 +25490,12 @@
 	    });
 	    Object.defineProperty(Adaptation.prototype, "model", {
 	        get: function () {
-	            return this.modelStore;
+	            return this.modelBox ? this.modelBox.get() : this.modelStore;
 	        },
 	        set: function (value) {
+	            if (this.modelBox) {
+	                this.modelBox.set(value);
+	            }
 	            this.modelStore = value;
 	            this.viewStore = this.render(value);
 	            this.errorStore = [];
@@ -25484,7 +25505,8 @@
 	    });
 	    Object.defineProperty(Adaptation.prototype, "error", {
 	        get: function () {
-	            return this.errorStore;
+	            return !this.modelBox || this.modelBox.get() === this.modelStore ?
+	                this.errorStore : [];
 	        },
 	        enumerable: true,
 	        configurable: true
@@ -25538,9 +25560,12 @@
 	        return also(checker(check));
 	    }
 	    function create(value, label) {
-	        return new Adaptation(value, label, inner.render, inner.parse);
+	        return new Adaptation(value, undefined, label, inner.render, inner.parse);
 	    }
-	    return { also: also, check: check, create: create };
+	    function use(box, label) {
+	        return new Adaptation(box.get(), box, label, inner.render, inner.parse);
+	    }
+	    return { also: also, check: check, create: create, use: use };
 	}
 	exports.field = field;
 	function numberAsString(decimalPlaces) {
@@ -26387,6 +26412,129 @@
 	    return RadioButtonNumber;
 	}(TypedRadioButton));
 	exports.RadioButtonNumber = RadioButtonNumber;
+
+
+/***/ },
+/* 203 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __extends = (this && this.__extends) || function (d, b) {
+	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+	    function __() { this.constructor = d; }
+	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	};
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var React = __webpack_require__(1);
+	var mobx_1 = __webpack_require__(180);
+	var mobx_react_1 = __webpack_require__(181);
+	var box_1 = __webpack_require__(189);
+	var rules_1 = __webpack_require__(182);
+	var field_1 = __webpack_require__(183);
+	var TextInput_1 = __webpack_require__(184);
+	var RuleBullets_1 = __webpack_require__(186);
+	// Underlying everything is a very pure unadorned MobX model
+	var Model = (function () {
+	    function Model() {
+	        this.a = 1;
+	        this.b = 2;
+	    }
+	    Object.defineProperty(Model.prototype, "product", {
+	        get: function () {
+	            return this.a * this.b;
+	        },
+	        enumerable: true,
+	        configurable: true
+	    });
+	    return Model;
+	}());
+	__decorate([
+	    mobx_1.observable
+	], Model.prototype, "a", void 0);
+	__decorate([
+	    mobx_1.observable
+	], Model.prototype, "b", void 0);
+	__decorate([
+	    mobx_1.computed
+	], Model.prototype, "product", null);
+	// This is what the model is wrapped in to support the editing UI
+	var ViewModel = (function () {
+	    function ViewModel(model) {
+	        var _this = this;
+	        this.model = model;
+	        var _a = box_1.box(model), a = _a.a, b = _a.b;
+	        this.a = ViewModel.factor.use(a, "A");
+	        this.b = ViewModel.factor.use(b, "B");
+	        var limit = rules_1.rule(function () {
+	            return (_this.a.model + _this.b.model > 10) ?
+	                "Total " + _this.a.model + " + " + _this.b.model + " is too big" : [];
+	        });
+	        this.validation = rules_1.rules([this.a, this.b, limit]);
+	    }
+	    return ViewModel;
+	}());
+	ViewModel.factor = field_1.field(field_1.numberLimits(1, 10)).also(field_1.numberAsString(2));
+	// given a model in props, wraps it and presents it
+	var Multiplier = (function (_super) {
+	    __extends(Multiplier, _super);
+	    function Multiplier(props) {
+	        var _this = _super.call(this, props) || this;
+	        _this.viewModel = new ViewModel(props.model);
+	        return _this;
+	    }
+	    Multiplier.prototype.componentWillReceiveProps = function (nextProps) {
+	        this.viewModel = new ViewModel(nextProps.model);
+	    };
+	    Multiplier.prototype.render = function () {
+	        var _a = this.viewModel, a = _a.a, b = _a.b, validation = _a.validation, product = _a.model.product;
+	        return (React.createElement("div", null,
+	            React.createElement("div", null,
+	                React.createElement("label", null,
+	                    "A = ",
+	                    React.createElement(TextInput_1.default, { value: a }))),
+	            React.createElement("div", null,
+	                React.createElement("label", null,
+	                    "B = ",
+	                    React.createElement(TextInput_1.default, { value: b }))),
+	            React.createElement("div", null,
+	                "Product (",
+	                a.model,
+	                " * ",
+	                b.model,
+	                ") = ",
+	                product),
+	            React.createElement("hr", null),
+	            React.createElement(RuleBullets_1.default, { rule: validation })));
+	    };
+	    return Multiplier;
+	}(React.Component));
+	Multiplier = __decorate([
+	    mobx_react_1.observer
+	], Multiplier);
+	// As a demo, show two UIs bound to the same model
+	var TwinMultiplier = (function (_super) {
+	    __extends(TwinMultiplier, _super);
+	    function TwinMultiplier() {
+	        var _this = _super !== null && _super.apply(this, arguments) || this;
+	        _this.model = new Model();
+	        return _this;
+	    }
+	    TwinMultiplier.prototype.render = function () {
+	        return (React.createElement("div", null,
+	            React.createElement("div", { className: "leftMultiplier" },
+	                React.createElement(Multiplier, { model: this.model })),
+	            React.createElement("div", { className: "rightMultiplier" },
+	                React.createElement(Multiplier, { model: this.model }))));
+	    };
+	    return TwinMultiplier;
+	}(React.Component));
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = TwinMultiplier;
 
 
 /***/ }
