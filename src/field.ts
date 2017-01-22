@@ -50,24 +50,36 @@ class Adaptation<View, Model> implements Field<View, Model> {
 
     @computed
     get view() {
-        return !this.modelBox || this.modelBox.get() === this.modelStore 
-            ? this.viewStore
-            : this.render(this.modelBox.get())
+        // If modelBox doesn't match our model value, render modelBox:
+        return this.modelBox && this.modelBox.get() !== this.modelStore 
+            ? this.render(this.modelBox.get())
+            : this.viewStore // otherwise return our view state            
     }
     set view(value: View) {
+        // Always update view state:
         this.viewStore = value;
+
+        // Make modelBox and modelStore consistent (one way or the other)
+        // and set errorStore appropriately:
         try {
-            this.modelStore = this.parse(value);            
+            this.modelStore = this.parse(value);
             this.errorStore = [];
             if (this.modelBox) {
                 this.modelBox.set(this.modelStore);
             }
         } catch (error) {
             if (error instanceof ValidationError) {
+                if (this.modelBox) {
+                    this.modelStore = this.modelBox.get();
+                }
                 this.errorStore = getErrors(error);
             } else {
                 throw error;
-            }            
+            }
+        }
+
+        if (this.modelBox && this.modelBox.get() !== this.modelStore) {
+            throw new Error("Invariant: view setter must result in identical modelBox and modelStore");
         }
     }
 
@@ -86,8 +98,8 @@ class Adaptation<View, Model> implements Field<View, Model> {
 
     @computed
     get error(): string[] {
-        return !this.modelBox || this.modelBox.get() === this.modelStore ?
-            this.errorStore : [];
+        return this.modelBox && this.modelBox.get() !== this.modelStore ? 
+            [] : this.errorStore;        
     }
 
     get() {
