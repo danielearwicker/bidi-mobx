@@ -6,3 +6,4 @@ export * from "./src/components/TextInput";
 export * from "./src/field";
 export * from "./src/box";
 export * from "./src/rules";
+export * from "./src/project";
