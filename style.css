@@ -18,7 +18,11 @@ section {
     background: pink;
 }
 
-.simpsons fieldset {
+.simpsons fieldset, .leftMultiplier, .rightMultiplier {
     display: inline-block;
     vertical-align: top;
+}
+
+.rightMultiplier {
+    margin-left: 12px;
 }

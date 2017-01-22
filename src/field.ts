@@ -34,10 +34,12 @@ function getErrors(e: any) {
 class Adaptation<View, Model> implements Field<View, Model> {
 
     @observable modelStore: Model;
+   
     @observable viewStore: View;
     @observable errorStore: string[];
-
+    
     constructor(init: Model,
+        private modelBox: BoxedValue<Model> | undefined,
         public label: string | undefined,        
         private render: (view: Model) => View,
         private parse: (str: View) => Model
@@ -48,23 +50,35 @@ class Adaptation<View, Model> implements Field<View, Model> {
 
     @computed
     get view() {
-        return this.viewStore;
+        return !this.modelBox || this.modelBox.get() === this.modelStore 
+            ? this.viewStore
+            : this.render(this.modelBox.get())
     }
     set view(value: View) {
         this.viewStore = value;
         try {
-            this.modelStore = this.parse(value);
+            this.modelStore = this.parse(value);            
             this.errorStore = [];
+            if (this.modelBox) {
+                this.modelBox.set(this.modelStore);
+            }
         } catch (error) {
-            this.errorStore = getErrors(error);
+            if (error instanceof ValidationError) {
+                this.errorStore = getErrors(error);
+            } else {
+                throw error;
+            }            
         }
     }
 
     @computed
     get model() {
-        return this.modelStore;
+        return this.modelBox ? this.modelBox.get() : this.modelStore;
     }
     set model(value: Model) {
+        if (this.modelBox) {
+            this.modelBox.set(value);
+        }
         this.modelStore = value;
         this.viewStore = this.render(value);
         this.errorStore = [];
@@ -72,7 +86,8 @@ class Adaptation<View, Model> implements Field<View, Model> {
 
     @computed
     get error(): string[] {
-        return this.errorStore;
+        return !this.modelBox || this.modelBox.get() === this.modelStore ?
+            this.errorStore : [];
     }
 
     get() {
@@ -97,7 +112,8 @@ export interface Adaptor<View, Model> {
 export interface FieldBuilder<View, Model> {
     also<View2>(outer: Adaptor<View2, View>): FieldBuilder<View2, Model>;
     check(check: Check<View>): FieldBuilder<View, Model>;
-    create(value: Model, label?: string, delay?: number): Field<View, Model>;
+    create(value: Model, label?: string): Field<View, Model>;
+    use(box: BoxedValue<Model>, label?: string): Field<View, Model>;
 }
 
 export function field<View, Model>(inner: Adaptor<View, Model>): FieldBuilder<View, Model> {
@@ -120,10 +136,14 @@ export function field<View, Model>(inner: Adaptor<View, Model>): FieldBuilder<Vi
     }
 
     function create(value: Model, label?: string): Field<View, Model> {
-        return new Adaptation<View, Model>(value, label, inner.render, inner.parse);
+        return new Adaptation<View, Model>(value, undefined, label, inner.render, inner.parse);
     }
     
-    return { also, check, create };
+    function use(box: BoxedValue<Model>, label?: string): Field<View, Model> {
+        return new Adaptation<View, Model>(box.get(), box, label, inner.render, inner.parse);
+    }
+
+    return { also, check, create, use };
 }
 
 export function numberAsString(decimalPlaces?: number) {

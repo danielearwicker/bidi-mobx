@@ -10,12 +10,12 @@ import TextInput from "../src/components/TextInput";
 import RuleBullets from "../src/components/RuleBullets";
 
 @observer
-export default class NumberEditor extends React.Component<{}, {}> {
+export default class Multiplier extends React.Component<{}, {}> {
 
     private static factor = field(numberLimits(1, 10)).also(numberAsString(2));
 
-    private a = NumberEditor.factor.create(1, "A");
-    private b = NumberEditor.factor.create(12, "B");
+    private a = Multiplier.factor.create(1, "A");
+    private b = Multiplier.factor.create(12, "B");
 
     private limit = rule(() => 
         (this.a.model + this.b.model > 10) ? 
