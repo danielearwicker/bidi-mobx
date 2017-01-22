@@ -18,11 +18,12 @@ section {
     background: pink;
 }
 
-.simpsons fieldset, .leftMultiplier, .rightMultiplier {
+.simpsons fieldset, .multiplier {
     display: inline-block;
     vertical-align: top;
 }
 
-.rightMultiplier {
-    margin-left: 12px;
+.multiplier > div {
+    padding: 12px;
+    margin-right: 12px;
 }

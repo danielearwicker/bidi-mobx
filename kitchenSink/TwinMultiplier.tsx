@@ -1,11 +1,11 @@
 import * as React from "react";
 
 import { computed, observable } from "mobx";
-import { observer } from "mobx-react";
 
 import { box } from "../src/box";
-import { rule, rules, Rule } from "../src/rules";
-import { field, Field, numberAsString, numberLimits } from "../src/field"
+import { rule, rules } from "../src/rules";
+import { field, numberAsString, numberLimits } from "../src/field";
+import { project } from "../src/project";
 
 import TextInput from "../src/components/TextInput";
 import RuleBullets from "../src/components/RuleBullets";
@@ -25,62 +25,34 @@ class Model {
     }
 }
 
-// This is what the model is wrapped in to support the editing UI
-class ViewModel {
-    private static factor = field(numberLimits(1, 10)).also(numberAsString(2));
+// Build a component that renders our model, first by projecting it into a view-model
+const Multiplier = project((model: Model) => {
 
-    public model: Model;
+    const factor = field(numberLimits(1, 10)).also(numberAsString(2));
 
-    public a: Field<string, number>;
-    public b: Field<string, number>;
+    const a = factor.use(box(model).a, "A"),
+          b = factor.use(box(model).b, "B"),
+          validation = rules([a, b, rule(() => model.invalid)]);
 
-    public validation: Rule;
+    return { a, b, validation }; // this is the view-model that will actually be rendered
 
-    constructor(model: Model) {
-        this.model = model;
+}).render<{ background: string }>(props => { // Now we pass a plain stateless component
+    
+    // The model and view props are automatically blended into whatever
+    // we require (as specified in the type argument to `render`)
+    const { a, b, validation } = props.view;
+    const { product } = props.model;
 
-        const {a, b} = box(model);
-
-        this.a = ViewModel.factor.use(a, "A");
-        this.b = ViewModel.factor.use(b, "B");
-
-        this.validation = rules([this.a, this.b, rule(() => model.invalid)]);
-    }
-}
-
-interface MultiplierProps {
-    model: Model;
-}
-
-// given a model in props, wraps it and presents it
-@observer
-default class Multiplier extends React.Component<MultiplierProps, {}> {
-
-    private viewModel: ViewModel;
-
-    constructor(props: MultiplierProps) {
-        super(props);
-        this.viewModel = new ViewModel(props.model);
-    }
-
-    componentWillReceiveProps(nextProps: MultiplierProps) {
-        this.viewModel = new ViewModel(nextProps.model);
-    }
-   
-    render() {
-        const {a, b, validation, model: {product}} = this.viewModel;
-
-        return (
-            <div>
-                <div><label>A = <TextInput value={a}/></label></div>
-                <div><label>B = <TextInput value={b}/></label></div>
-                <div>Product ({a.model} * {b.model}) = {product}</div>
-                <hr/>
-                <RuleBullets rule={validation} />
-            </div>
-        );
-    }
-}
+    return (
+        <div style={{ background: props.background }}>
+            <div><label>A = <TextInput value={a}/></label></div>
+            <div><label>B = <TextInput value={b}/></label></div>
+            <div>Product ({a.model} * {b.model}) = {product.toFixed(2)}</div>
+            <hr/>
+            <RuleBullets rule={validation} />
+        </div>
+    );
+});
 
 // As a demo, show two UIs bound to the same model
 export default class TwinMultiplier extends React.Component<{}, {}> {
@@ -90,11 +62,11 @@ export default class TwinMultiplier extends React.Component<{}, {}> {
     render() {        
         return (
             <div>
-                <div className="leftMultiplier">
-                    <Multiplier model={this.model} />
+                <div className="multiplier">
+                    <Multiplier model={this.model} background="#0FB" />
                 </div>
-                <div className="rightMultiplier">
-                    <Multiplier model={this.model} />
+                <div className="multiplier">
+                    <Multiplier model={this.model} background="#0BF" />
                 </div>
             </div>
         );
