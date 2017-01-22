@@ -18,6 +18,11 @@ class Model {
     @computed get product() {
         return this.a * this.b;
     }
+
+    @computed get invalid() {
+       return (this.a + this.b > 10) ? 
+        `Total ${this.a} + ${this.b} is too big` : undefined;
+    }
 }
 
 // This is what the model is wrapped in to support the editing UI
@@ -39,11 +44,7 @@ class ViewModel {
         this.a = ViewModel.factor.use(a, "A");
         this.b = ViewModel.factor.use(b, "B");
 
-        const limit = rule(() => 
-            (this.a.model + this.b.model > 10) ? 
-                `Total ${this.a.model} + ${this.b.model} is too big` : []);
-    
-        this.validation = rules([this.a, this.b, limit]);
+        this.validation = rules([this.a, this.b, rule(() => model.invalid)]);
     }
 }
 

@@ -26461,6 +26461,14 @@
 	        enumerable: true,
 	        configurable: true
 	    });
+	    Object.defineProperty(Model.prototype, "invalid", {
+	        get: function () {
+	            return (this.a + this.b > 10) ?
+	                "Total " + this.a + " + " + this.b + " is too big" : undefined;
+	        },
+	        enumerable: true,
+	        configurable: true
+	    });
 	    return Model;
 	}());
 	__decorate([
@@ -26472,19 +26480,17 @@
 	__decorate([
 	    mobx_1.computed
 	], Model.prototype, "product", null);
+	__decorate([
+	    mobx_1.computed
+	], Model.prototype, "invalid", null);
 	// This is what the model is wrapped in to support the editing UI
 	var ViewModel = (function () {
 	    function ViewModel(model) {
-	        var _this = this;
 	        this.model = model;
 	        var _a = box_1.box(model), a = _a.a, b = _a.b;
 	        this.a = ViewModel.factor.use(a, "A");
 	        this.b = ViewModel.factor.use(b, "B");
-	        var limit = rules_1.rule(function () {
-	            return (_this.a.model + _this.b.model > 10) ?
-	                "Total " + _this.a.model + " + " + _this.b.model + " is too big" : [];
-	        });
-	        this.validation = rules_1.rules([this.a, this.b, limit]);
+	        this.validation = rules_1.rules([this.a, this.b, rules_1.rule(function () { return model.invalid; })]);
 	    }
 	    return ViewModel;
 	}());
