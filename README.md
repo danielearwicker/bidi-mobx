@@ -59,6 +59,12 @@ And then chain them together to create fields that automatically convert both di
 ## Kitchen sink demo
 Gradually growing... [click here](https://danielearwicker.github.io/bidi-mobx/)
 
+## Install
+
+    npm install bidi-mobx
+
+You may need to define mobx as an external in your Webpack config [to avoid it being duplicated](https://github.com/danielearwicker/bidi-mobx/issues/4)
+
 ## WAT?
 There's a UI pattern with a stupid name: MVVM (Model-View-ViewModel), but it's a very cool idea. The takeaway is that a view needs to be supported by state data that is additional to the pure data being edited. [More discussion about this.](https://github.com/danielearwicker/bidi-mobx/blob/master/notes.md)
 
