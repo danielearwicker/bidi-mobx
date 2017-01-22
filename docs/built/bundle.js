@@ -25459,7 +25459,20 @@
 	        this.render = render;
 	        this.parse = parse;
 	        this.modelStore = init;
-	        this.view = render(init);
+	        this.viewStore = render(init);
+	        // Set up the initial validation error, if any
+	        try {
+	            this.parse(this.viewStore);
+	            this.errorStore = [];
+	        }
+	        catch (error) {
+	            if (error instanceof ValidationError) {
+	                this.errorStore = getErrors(error);
+	            }
+	            else {
+	                throw error;
+	            }
+	        }
 	    }
 	    Object.defineProperty(Adaptation.prototype, "view", {
 	        get: function () {
