@@ -1,5 +1,5 @@
 import * as React from "react";
-import { action } from "mobx";
+import { action, Lambda, autorun } from "mobx";
 import { observer } from "mobx-react";
 import { BoxedValue } from "boxm";
 import { FormElementProps, removeProps } from "./FormElementProps";
@@ -11,9 +11,13 @@ export interface CheckBoxProps extends FormElementProps {
 @observer
 export default class CheckBox extends React.Component<CheckBoxProps, {}> {
 
+    quit: Lambda;
+
     indeterminate = (input: HTMLInputElement) => {
         if (input) {
-            input.indeterminate = this.props.value.get() === undefined;
+            this.quit = autorun(() => input.indeterminate = this.props.value.get() === undefined);
+        } else {
+            this.quit();
         }
     }
 
@@ -23,12 +27,12 @@ export default class CheckBox extends React.Component<CheckBoxProps, {}> {
     }
 
     render() {
-        return ( 
-            <input type="checkbox" 
+        return (
+            <input type="checkbox"
                 {...removeProps(this.props, "value")}
-                checked={this.props.value.get() || false}                
-                ref={this.indeterminate}
-                onChange={this.changed}/> 
+                checked={this.props.value.get() || false}
+                ref={ this.indeterminate }
+                onChange={this.changed}/>
         );
     }
 }

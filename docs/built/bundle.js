@@ -21487,6 +21487,7 @@
 	var Multiplier_1 = __webpack_require__(179);
 	var Simpsons_1 = __webpack_require__(187);
 	var TwinMultiplier_1 = __webpack_require__(203);
+	var MusicLibrary_1 = __webpack_require__(205);
 	function Source(prop) {
 	    var url = "https://github.com/danielearwicker/bidi-mobx/blob/master/kitchenSink/" + prop.path;
 	    return React.createElement("a", { href: url }, "Source");
@@ -21494,27 +21495,33 @@
 	function App(props) {
 	    props; // not used
 	    return (React.createElement("div", null,
-	        React.createElement("section", null,
+	        React.createElement("section", { id: "title" },
 	            React.createElement("h1", null, "Kitchen Sink for bidi-mobx"),
 	            React.createElement("p", null, "A selection of miscellaneous demos and interactive test beds.")),
-	        React.createElement("section", null,
+	        React.createElement("section", { id: "multiplier" },
 	            React.createElement("h2", null, "Multiplier"),
 	            React.createElement("p", null, "A calculator that multiples two numbers. Validation is continuous."),
 	            React.createElement("p", null,
 	                React.createElement(Source, { path: "Multiplier.tsx" })),
 	            React.createElement(Multiplier_1.default, null)),
-	        React.createElement("section", null,
+	        React.createElement("section", { id: "simpsons" },
 	            React.createElement("h2", null, "Simpsons"),
 	            React.createElement("p", null, "A silly example that covers a few interesting scenarios."),
 	            React.createElement("p", null,
 	                React.createElement(Source, { path: "simpsons/components/Simpsons.tsx" })),
 	            React.createElement(Simpsons_1.default, null)),
-	        React.createElement("section", null,
+	        React.createElement("section", { id: "twinmultiplier" },
 	            React.createElement("h2", null, "Twin Multiplier"),
-	            React.createElement("p", null, "Two UIs bound to the same underlying data. Note that the inputs are formatted" + " " + "to two decimal places only."),
+	            React.createElement("p", null, "Two UIs bound to the same underlying data. Note that the inputs are formatted" + " " + "to an adjustable number of decimal places."),
 	            React.createElement("p", null,
 	                React.createElement(Source, { path: "TwinMultiplier.tsx" })),
-	            React.createElement(TwinMultiplier_1.default, null))));
+	            React.createElement(TwinMultiplier_1.default, null)),
+	        React.createElement("section", { id: "musiclibrary" },
+	            React.createElement("h2", null, "Music Library"),
+	            React.createElement("p", null, "Demonstrates the indeterminate checkbox state."),
+	            React.createElement("p", null,
+	                React.createElement(Source, { path: "MusicLibrary.tsx" })),
+	            React.createElement(MusicLibrary_1.default, null))));
 	}
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.default = App;
@@ -25459,10 +25466,10 @@
 	        this.render = render;
 	        this.parse = parse;
 	        this.modelStore = init;
-	        this.viewStore = render(init);
+	        this.viewStoreCanonical = this.viewStoreAny = render(init);
 	        // Set up the initial validation error, if any
 	        try {
-	            this.parse(this.viewStore);
+	            this.parse(this.viewStoreAny);
 	            this.errorStore = [];
 	        }
 	        catch (error) {
@@ -25474,16 +25481,21 @@
 	            }
 	        }
 	    }
+	    Object.defineProperty(Adaptation.prototype, "viewFromModel", {
+	        get: function () {
+	            return this.render(this.modelBox ? this.modelBox.get() : this.modelStore);
+	        },
+	        enumerable: true,
+	        configurable: true
+	    });
 	    Object.defineProperty(Adaptation.prototype, "view", {
 	        get: function () {
-	            // If modelBox doesn't match our model value, render modelBox:
-	            return this.modelBox && this.modelBox.get() !== this.modelStore
-	                ? this.render(this.modelBox.get())
-	                : this.viewStore; // otherwise return our view state            
+	            // If viewFromModel doesn't match viewStoreCanonical, use viewFromModel:
+	            return this.viewFromModel !== this.viewStoreCanonical
+	                ? this.viewFromModel
+	                : this.viewStoreAny; // otherwise return our view state
 	        },
 	        set: function (value) {
-	            // Always update view state:
-	            this.viewStore = value;
 	            // Make modelBox and modelStore consistent (one way or the other)
 	            // and set errorStore appropriately:
 	            try {
@@ -25495,18 +25507,17 @@
 	            }
 	            catch (error) {
 	                if (error instanceof ValidationError) {
+	                    this.errorStore = getErrors(error);
 	                    if (this.modelBox) {
 	                        this.modelStore = this.modelBox.get();
 	                    }
-	                    this.errorStore = getErrors(error);
 	                }
 	                else {
 	                    throw error;
 	                }
 	            }
-	            if (this.modelBox && this.modelBox.get() !== this.modelStore) {
-	                throw new Error("Invariant: view setter must result in identical modelBox and modelStore");
-	            }
+	            this.viewStoreAny = value;
+	            this.viewStoreCanonical = this.viewFromModel;
 	        },
 	        enumerable: true,
 	        configurable: true
@@ -25520,7 +25531,7 @@
 	                this.modelBox.set(value);
 	            }
 	            this.modelStore = value;
-	            this.viewStore = this.render(value);
+	            this.viewStoreCanonical = this.viewStoreAny = this.render(value);
 	            this.errorStore = [];
 	        },
 	        enumerable: true,
@@ -25528,7 +25539,7 @@
 	    });
 	    Object.defineProperty(Adaptation.prototype, "error", {
 	        get: function () {
-	            return this.modelBox && this.modelBox.get() !== this.modelStore ?
+	            return this.viewFromModel !== this.viewStoreCanonical ?
 	                [] : this.errorStore;
 	        },
 	        enumerable: true,
@@ -25550,10 +25561,16 @@
 	], Adaptation.prototype, "modelStore", void 0);
 	__decorate([
 	    mobx_1.observable
-	], Adaptation.prototype, "viewStore", void 0);
+	], Adaptation.prototype, "viewStoreCanonical", void 0);
+	__decorate([
+	    mobx_1.observable
+	], Adaptation.prototype, "viewStoreAny", void 0);
 	__decorate([
 	    mobx_1.observable
 	], Adaptation.prototype, "errorStore", void 0);
+	__decorate([
+	    mobx_1.computed
+	], Adaptation.prototype, "viewFromModel", null);
 	__decorate([
 	    mobx_1.computed
 	], Adaptation.prototype, "view", null);
@@ -26272,7 +26289,10 @@
 	        var _this = _super !== null && _super.apply(this, arguments) || this;
 	        _this.indeterminate = function (input) {
 	            if (input) {
-	                input.indeterminate = _this.props.value.get() === undefined;
+	                _this.quit = mobx_1.autorun(function () { return input.indeterminate = _this.props.value.get() === undefined; });
+	            }
+	            else {
+	                _this.quit();
 	            }
 	        };
 	        return _this;
@@ -26496,9 +26516,18 @@
 	__decorate([
 	    mobx_1.computed
 	], Model.prototype, "invalid", null);
+	var dynamicDecimals = {
+	    render: function (value) {
+	        return field_1.numberAsString(decimalPlaces.get()).render(value);
+	    },
+	    parse: function (value) {
+	        return field_1.numberAsString(decimalPlaces.get()).parse(value);
+	    }
+	};
+	var decimalPlaces = mobx_1.observable.box(2);
 	// Build a component that renders our model, first by projecting it into a view-model
 	var Multiplier = project_1.project(function (model) {
-	    var factor = field_1.field(field_1.numberLimits(1, 10)).also(field_1.numberAsString(2));
+	    var factor = field_1.field(field_1.numberLimits(1, 10)).also(dynamicDecimals);
 	    var a = factor.use(box_1.box(model).a, "A"), b = factor.use(box_1.box(model).b, "B"), validation = rules_1.rules([a, b, rules_1.rule(function () { return model.invalid; })]);
 	    return { a: a, b: b, validation: validation }; // this is the view-model that will actually be rendered
 	}).render(function (props) {
@@ -26531,6 +26560,7 @@
 	    function TwinMultiplier() {
 	        var _this = _super !== null && _super.apply(this, arguments) || this;
 	        _this.model = new Model();
+	        _this.decimalPlacesField = field_1.field(field_1.numberLimits(0, 6)).also(field_1.numberAsString(0)).use(decimalPlaces);
 	        return _this;
 	    }
 	    TwinMultiplier.prototype.render = function () {
@@ -26538,7 +26568,10 @@
 	            React.createElement("div", { className: "multiplier" },
 	                React.createElement(Multiplier, { model: this.model, background: "#0FB" })),
 	            React.createElement("div", { className: "multiplier" },
-	                React.createElement(Multiplier, { model: this.model, background: "#0BF" }))));
+	                React.createElement(Multiplier, { model: this.model, background: "#0BF" })),
+	            React.createElement("div", null,
+	                React.createElement("span", null, "Decimal places:"),
+	                React.createElement(TextInput_1.default, { value: this.decimalPlacesField }))));
 	    };
 	    return TwinMultiplier;
 	}(React.Component));
@@ -26592,6 +26625,108 @@
 	    };
 	}
 	exports.project = project;
+
+
+/***/ },
+/* 205 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __extends = (this && this.__extends) || function (d, b) {
+	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+	    function __() { this.constructor = d; }
+	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	};
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var React = __webpack_require__(1);
+	var mobx_1 = __webpack_require__(180);
+	var mobx_react_1 = __webpack_require__(181);
+	var box_1 = __webpack_require__(189);
+	var CheckBox_1 = __webpack_require__(199);
+	var LeafNode = (function () {
+	    function LeafNode(label) {
+	        this.label = label;
+	        this.state = false;
+	    }
+	    return LeafNode;
+	}());
+	__decorate([
+	    mobx_1.observable
+	], LeafNode.prototype, "state", void 0);
+	var ParentNode = (function () {
+	    function ParentNode(label) {
+	        var children = [];
+	        for (var _i = 1; _i < arguments.length; _i++) {
+	            children[_i - 1] = arguments[_i];
+	        }
+	        this.label = label;
+	        this.children = children;
+	    }
+	    Object.defineProperty(ParentNode.prototype, "state", {
+	        get: function () {
+	            var count = 0;
+	            for (var _i = 0, _a = this.children; _i < _a.length; _i++) {
+	                var child = _a[_i];
+	                switch (child.state) {
+	                    case undefined:
+	                        return undefined;
+	                    case true:
+	                        count++;
+	                        break;
+	                }
+	            }
+	            return count === this.children.length ? true :
+	                count === 0 ? false :
+	                    undefined;
+	        },
+	        set: function (newState) {
+	            for (var _i = 0, _a = this.children; _i < _a.length; _i++) {
+	                var child = _a[_i];
+	                child.state = newState;
+	            }
+	        },
+	        enumerable: true,
+	        configurable: true
+	    });
+	    return ParentNode;
+	}());
+	__decorate([
+	    mobx_1.computed
+	], ParentNode.prototype, "state", null);
+	var TreeNode = mobx_react_1.observer(function (props) {
+	    return (React.createElement("div", { className: "treeNode" },
+	        React.createElement("div", { className: "treeNodeHeader" },
+	            React.createElement("label", null,
+	                React.createElement(CheckBox_1.default, { value: box_1.box(props.node).state }),
+	                " ",
+	                props.node.label)),
+	        !props.node.children ? undefined : (React.createElement("div", { className: "treeNodeChildren" }, props.node.children.map(function (child) { return React.createElement(TreeNode, { key: child.label, node: child }); })))));
+	});
+	var MusicLibrary = (function (_super) {
+	    __extends(MusicLibrary, _super);
+	    function MusicLibrary() {
+	        var _this = _super !== null && _super.apply(this, arguments) || this;
+	        _this.root = buildModel();
+	        return _this;
+	    }
+	    MusicLibrary.prototype.render = function () {
+	        return React.createElement(TreeNode, { node: this.root });
+	    };
+	    return MusicLibrary;
+	}(React.Component));
+	MusicLibrary = __decorate([
+	    mobx_react_1.observer
+	], MusicLibrary);
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = MusicLibrary;
+	function buildModel() {
+	    return new ParentNode("Music", new ParentNode("The Beatles", new ParentNode("Please Please Me", new LeafNode("I Saw Her Standing There"), new LeafNode("Misery"), new LeafNode("Chains"), new LeafNode("Anna (Go With Him)"), new LeafNode("There's A Place"), new LeafNode("From Me To You"), new LeafNode("Please Please Me")), new ParentNode("Revolver", new LeafNode("Taxman"), new LeafNode("I'm Only Sleeping"), new LeafNode("Yellow Submarine"), new LeafNode("Eleanor Rigby"), new LeafNode("For No One"), new LeafNode("Good Day Sunshine"), new LeafNode("And Your Bird Can Sing"), new LeafNode("She Said, She Said"), new LeafNode("I Want To Tell You"), new LeafNode("Got To Get You Into My Life"), new LeafNode("Tomorrow Never Knows"))), new ParentNode("Vanilla Ice", new ParentNode("The Best of Vanilla Ice", new LeafNode("Ice Ice Baby"))));
+	}
 
 
 /***/ }

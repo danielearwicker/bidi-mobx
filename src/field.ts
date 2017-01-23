@@ -34,8 +34,9 @@ function getErrors(e: any) {
 class Adaptation<View, Model> implements Field<View, Model> {
 
     @observable modelStore: Model;
-   
-    @observable viewStore: View;
+    
+    @observable viewStoreCanonical: View;
+    @observable viewStoreAny: View;
     @observable errorStore: string[];
     
     constructor(init: Model,
@@ -45,14 +46,14 @@ class Adaptation<View, Model> implements Field<View, Model> {
         private parse: (str: View) => Model
     ) {
         this.modelStore = init;
-        this.viewStore = render(init);
+        this.viewStoreCanonical = this.viewStoreAny = render(init);
     
         // Set up the initial validation error, if any
         try {
-            this.parse(this.viewStore);
-            this.errorStore = [];            
+            this.parse(this.viewStoreAny);
+            this.errorStore = [];
         } catch (error) {
-            if (error instanceof ValidationError) {                
+            if (error instanceof ValidationError) {
                 this.errorStore = getErrors(error);
             } else {
                 throw error;
@@ -61,16 +62,19 @@ class Adaptation<View, Model> implements Field<View, Model> {
     }
 
     @computed
+    get viewFromModel() {
+        return this.render(this.modelBox ? this.modelBox.get() : this.modelStore);
+    }
+
+    @computed
     get view() {
-        // If modelBox doesn't match our model value, render modelBox:
-        return this.modelBox && this.modelBox.get() !== this.modelStore 
-            ? this.render(this.modelBox.get())
-            : this.viewStore // otherwise return our view state            
+        // If viewFromModel doesn't match viewStoreCanonical, use viewFromModel:
+        return this.viewFromModel !== this.viewStoreCanonical
+            ? this.viewFromModel
+            : this.viewStoreAny // otherwise return our view state
     }
     set view(value: View) {
-        // Always update view state:
-        this.viewStore = value;
-
+        
         // Make modelBox and modelStore consistent (one way or the other)
         // and set errorStore appropriately:
         try {
@@ -80,19 +84,18 @@ class Adaptation<View, Model> implements Field<View, Model> {
                 this.modelBox.set(this.modelStore);
             }
         } catch (error) {
-            if (error instanceof ValidationError) {
-                if (this.modelBox) {
-                    this.modelStore = this.modelBox.get();
-                }
+            if (error instanceof ValidationError) {                
                 this.errorStore = getErrors(error);
+                if (this.modelBox) {
+                    this.modelStore = this.modelBox.get();                    
+                }
             } else {
                 throw error;
             }
         }
 
-        if (this.modelBox && this.modelBox.get() !== this.modelStore) {
-            throw new Error("Invariant: view setter must result in identical modelBox and modelStore");
-        }
+        this.viewStoreAny = value;
+        this.viewStoreCanonical = this.viewFromModel;
     }
 
     @computed
@@ -104,21 +107,21 @@ class Adaptation<View, Model> implements Field<View, Model> {
             this.modelBox.set(value);
         }
         this.modelStore = value;
-        this.viewStore = this.render(value);
+        this.viewStoreCanonical = this.viewStoreAny = this.render(value);        
         this.errorStore = [];
     }
 
     @computed
     get error(): string[] {
-        return this.modelBox && this.modelBox.get() !== this.modelStore ? 
-            [] : this.errorStore;        
+        return this.viewFromModel !== this.viewStoreCanonical ? 
+            [] : this.errorStore;
     }
 
     get() {
         return this.view;
     }
 
-    @action    
+    @action
     set(v: View) {
         this.view = v;
     }

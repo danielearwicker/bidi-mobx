@@ -4,7 +4,7 @@ import { computed, observable } from "mobx";
 
 import { box } from "../src/box";
 import { rule, rules } from "../src/rules";
-import { field, numberAsString, numberLimits } from "../src/field";
+import { field, numberAsString, numberLimits, Adaptor } from "../src/field";
 import { project } from "../src/project";
 
 import TextInput from "../src/components/TextInput";
@@ -25,10 +25,21 @@ class Model {
     }
 }
 
+const dynamicDecimals: Adaptor<string, number> = {
+    render(value: number) {
+        return numberAsString(decimalPlaces.get()).render(value);
+    },
+    parse(value: string) {
+        return numberAsString(decimalPlaces.get()).parse(value);
+    }
+};
+
+const decimalPlaces = observable.box(2);
+
 // Build a component that renders our model, first by projecting it into a view-model
 const Multiplier = project((model: Model) => {
 
-    const factor = field(numberLimits(1, 10)).also(numberAsString(2));
+    const factor = field(numberLimits(1, 10)).also(dynamicDecimals);
 
     const a = factor.use(box(model).a, "A"),
           b = factor.use(box(model).b, "B"),
@@ -58,6 +69,7 @@ const Multiplier = project((model: Model) => {
 export default class TwinMultiplier extends React.Component<{}, {}> {
 
     private readonly model = new Model();
+    private readonly decimalPlacesField = field(numberLimits(0, 6)).also(numberAsString(0)).use(decimalPlaces);
 
     render() {        
         return (
@@ -67,6 +79,9 @@ export default class TwinMultiplier extends React.Component<{}, {}> {
                 </div>
                 <div className="multiplier">
                     <Multiplier model={this.model} background="#0BF" />
+                </div>
+                <div>
+                    <span>Decimal places:</span><TextInput value={this.decimalPlacesField} />
                 </div>
             </div>
         );

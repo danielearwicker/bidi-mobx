@@ -1,6 +1,6 @@
 {
   "name": "bidi-mobx",
-  "version": "0.18.3",
+  "version": "0.18.4",
   "description": "Two-way binding is back, and this time it's respectable",
   "main": "built/index.js",
   "types": "built/index.d.ts",

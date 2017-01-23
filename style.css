@@ -27,3 +27,7 @@ section {
     padding: 12px;
     margin-right: 12px;
 }
+
+.treenodeChildren {
+    padding-left: 16px;
+}
