@@ -31,3 +31,35 @@ section {
 .treenodeChildren {
     padding-left: 16px;
 }
+
+.demoSwitcher {
+    position: relative;
+    margin: 8px;
+    border: 1px solid silver;
+    background: white;
+}
+
+.demoSwitcherHeader {
+    text-align: center;
+    background: silver;
+}
+
+.demoSwitcherHeader > * {
+    margin: 6px;
+}
+
+.demoSwitcherDescription {
+    background: grey;
+    color: white;
+    padding: 6px;
+    text-align: center;
+}
+
+.demoSwitcherDescription * {
+    color: white;
+}
+
+.demoSwitcherComponent {
+    padding: 10px;
+    text-align: left;
+}

@@ -21484,44 +21484,16 @@
 
 	"use strict";
 	var React = __webpack_require__(1);
-	var Multiplier_1 = __webpack_require__(179);
-	var Simpsons_1 = __webpack_require__(187);
-	var TwinMultiplier_1 = __webpack_require__(203);
-	var MusicLibrary_1 = __webpack_require__(205);
-	function Source(prop) {
-	    var url = "https://github.com/danielearwicker/bidi-mobx/blob/master/kitchenSink/" + prop.path;
-	    return React.createElement("a", { href: url }, "Source");
-	}
+	var DemoSwitcher_1 = __webpack_require__(179);
 	function App(props) {
 	    props; // not used
 	    return (React.createElement("div", null,
 	        React.createElement("section", { id: "title" },
-	            React.createElement("h1", null, "Kitchen Sink for bidi-mobx"),
-	            React.createElement("p", null, "A selection of miscellaneous demos and interactive test beds.")),
-	        React.createElement("section", { id: "multiplier" },
-	            React.createElement("h2", null, "Multiplier"),
-	            React.createElement("p", null, "A calculator that multiples two numbers. Validation is continuous."),
-	            React.createElement("p", null,
-	                React.createElement(Source, { path: "Multiplier.tsx" })),
-	            React.createElement(Multiplier_1.default, null)),
-	        React.createElement("section", { id: "simpsons" },
-	            React.createElement("h2", null, "Simpsons"),
-	            React.createElement("p", null, "A silly example that covers a few interesting scenarios."),
-	            React.createElement("p", null,
-	                React.createElement(Source, { path: "simpsons/components/Simpsons.tsx" })),
-	            React.createElement(Simpsons_1.default, null)),
-	        React.createElement("section", { id: "twinmultiplier" },
-	            React.createElement("h2", null, "Twin Multiplier"),
-	            React.createElement("p", null, "Two UIs bound to the same underlying data. Note that the inputs are formatted" + " " + "to an adjustable number of decimal places."),
-	            React.createElement("p", null,
-	                React.createElement(Source, { path: "TwinMultiplier.tsx" })),
-	            React.createElement(TwinMultiplier_1.default, null)),
-	        React.createElement("section", { id: "musiclibrary" },
-	            React.createElement("h2", null, "Music Library"),
-	            React.createElement("p", null, "Demonstrates the indeterminate checkbox state."),
-	            React.createElement("p", null,
-	                React.createElement(Source, { path: "MusicLibrary.tsx" })),
-	            React.createElement(MusicLibrary_1.default, null))));
+	            React.createElement("h1", null, "bidi-mobx"),
+	            React.createElement("p", null, "A small library that dreams big")),
+	        React.createElement("section", { id: "demos" },
+	            React.createElement("h2", null, "Demos"),
+	            React.createElement(DemoSwitcher_1.default, null))));
 	}
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.default = App;
@@ -21546,61 +21518,80 @@
 	var React = __webpack_require__(1);
 	var mobx_1 = __webpack_require__(180);
 	var mobx_react_1 = __webpack_require__(181);
-	var rules_1 = __webpack_require__(182);
-	var field_1 = __webpack_require__(183);
-	var TextInput_1 = __webpack_require__(184);
-	var RuleBullets_1 = __webpack_require__(186);
-	var Multiplier = Multiplier_1 = (function (_super) {
-	    __extends(Multiplier, _super);
-	    function Multiplier() {
+	var index_1 = __webpack_require__(182);
+	var Multiplier_1 = __webpack_require__(194);
+	var TwinMultiplier_1 = __webpack_require__(195);
+	var MusicLibrary_1 = __webpack_require__(196);
+	var Simpsons_1 = __webpack_require__(197);
+	function Source(prop) {
+	    var url = "https://github.com/danielearwicker/bidi-mobx/blob/master/kitchenSink/" + prop.path;
+	    return React.createElement("a", { href: url }, "Source");
+	}
+	var DemoSwitcher = (function (_super) {
+	    __extends(DemoSwitcher, _super);
+	    function DemoSwitcher() {
 	        var _this = _super !== null && _super.apply(this, arguments) || this;
-	        _this.a = Multiplier_1.factor.create(1, "A");
-	        _this.b = Multiplier_1.factor.create(12, "B");
-	        _this.limit = rules_1.rule(function () {
-	            return (_this.a.model + _this.b.model > 10) ?
-	                "Total " + _this.a.model + " + " + _this.b.model + " is too big" : [];
-	        });
-	        _this.validation = rules_1.rules([_this.a, _this.b, _this.limit]);
+	        _this.demos = [{
+	                title: "Multiplier",
+	                description: "A calculator that multiples two numbers. Validation is continuous.",
+	                component: function () { return React.createElement(Multiplier_1.default, null); },
+	                source: "Multiplier.tsx"
+	            }, {
+	                title: "Twin Multiplier",
+	                description: "Two UIs bound to the same underlying data. Note that the inputs are formatted to an adjustable number of decimal places.",
+	                component: function () { return React.createElement(TwinMultiplier_1.default, null); },
+	                source: "TwinMultiplier.tsx"
+	            }, {
+	                title: "Simpsons",
+	                description: "A silly example that covers a few interesting scenarios.",
+	                component: function () { return React.createElement(Simpsons_1.default, null); },
+	                source: "simpsons/components/Simpsons.tsx.tsx"
+	            }, {
+	                title: "Music Library",
+	                description: "Demonstrates the indeterminate checkbox state.",
+	                component: function () { return React.createElement(MusicLibrary_1.default, null); },
+	                source: "MusicLibrary.tsx"
+	            }];
+	        _this.index = 0;
 	        return _this;
 	    }
-	    Object.defineProperty(Multiplier.prototype, "product", {
-	        get: function () { return this.a.model * this.b.model; },
-	        enumerable: true,
-	        configurable: true
-	    });
-	    Multiplier.prototype.render = function () {
-	        var _a = this, a = _a.a, b = _a.b, product = _a.product, validation = _a.validation;
-	        return (React.createElement("div", null,
-	            React.createElement("div", null,
-	                React.createElement("label", null,
-	                    "A = ",
-	                    React.createElement(TextInput_1.default, { value: a }))),
-	            React.createElement("div", null,
-	                React.createElement("label", null,
-	                    "B = ",
-	                    React.createElement(TextInput_1.default, { value: b }))),
-	            React.createElement("div", null,
-	                "Product (",
-	                a.model,
-	                " * ",
-	                b.model,
-	                ") = ",
-	                product),
-	            React.createElement("hr", null),
-	            React.createElement(RuleBullets_1.default, { rule: validation })));
+	    DemoSwitcher.prototype.switch = function (delta) {
+	        this.index += delta;
+	        if (this.index < 0) {
+	            this.index = this.demos.length - 1;
+	        }
+	        else if (this.index >= this.demos.length) {
+	            this.index = 0;
+	        }
 	    };
-	    return Multiplier;
+	    DemoSwitcher.prototype.render = function () {
+	        var _this = this;
+	        var demo = this.demos[this.index];
+	        var range = this.demos.map(function (_, i) { return i; });
+	        return (React.createElement("div", { className: "demoSwitcher" },
+	            React.createElement("div", { className: "demoSwitcherHeader" },
+	                React.createElement("button", { onClick: function (_) { return _this.switch(-1); } }, "Previous"),
+	                React.createElement(index_1.SelectNumber, { options: range, value: index_1.box(this).index, labels: function (i) { return _this.demos[i].title; } }),
+	                React.createElement("button", { onClick: function (_) { return _this.switch(1); } }, "Next")),
+	            React.createElement("div", { className: "demoSwitcherDescription" },
+	                React.createElement("span", null, demo.description),
+	                " ",
+	                React.createElement(Source, { path: demo.source })),
+	            React.createElement("div", { className: "demoSwitcherComponent" }, demo.component())));
+	    };
+	    return DemoSwitcher;
 	}(React.Component));
-	Multiplier.factor = field_1.field(field_1.numberLimits(1, 10)).also(field_1.numberAsString(2));
 	__decorate([
-	    mobx_1.computed
-	], Multiplier.prototype, "product", null);
-	Multiplier = Multiplier_1 = __decorate([
+	    mobx_1.observable
+	], DemoSwitcher.prototype, "index", void 0);
+	__decorate([
+	    mobx_1.action
+	], DemoSwitcher.prototype, "switch", null);
+	DemoSwitcher = __decorate([
 	    mobx_react_1.observer
-	], Multiplier);
+	], DemoSwitcher);
 	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = Multiplier;
-	var Multiplier_1;
+	exports.default = DemoSwitcher;
 
 
 /***/ },
@@ -25368,6 +25359,339 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
+	function __export(m) {
+	    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+	}
+	__export(__webpack_require__(183));
+	__export(__webpack_require__(184));
+	__export(__webpack_require__(185));
+	__export(__webpack_require__(186));
+	__export(__webpack_require__(187));
+	__export(__webpack_require__(189));
+	__export(__webpack_require__(190));
+	__export(__webpack_require__(191));
+	__export(__webpack_require__(188));
+	__export(__webpack_require__(193));
+
+
+/***/ },
+/* 183 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __extends = (this && this.__extends) || function (d, b) {
+	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+	    function __() { this.constructor = d; }
+	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	};
+	var __assign = (this && this.__assign) || Object.assign || function(t) {
+	    for (var s, i = 1, n = arguments.length; i < n; i++) {
+	        s = arguments[i];
+	        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+	            t[p] = s[p];
+	    }
+	    return t;
+	};
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var React = __webpack_require__(1);
+	var mobx_1 = __webpack_require__(180);
+	var mobx_react_1 = __webpack_require__(181);
+	var FormElementProps_1 = __webpack_require__(184);
+	var CheckBox = (function (_super) {
+	    __extends(CheckBox, _super);
+	    function CheckBox() {
+	        var _this = _super !== null && _super.apply(this, arguments) || this;
+	        _this.indeterminate = function (input) {
+	            if (input) {
+	                _this.quit = mobx_1.autorun(function () { return input.indeterminate = _this.props.value.get() === undefined; });
+	            }
+	            else {
+	                _this.quit();
+	            }
+	        };
+	        return _this;
+	    }
+	    CheckBox.prototype.changed = function (e) {
+	        this.props.value.set(e.currentTarget.checked);
+	    };
+	    CheckBox.prototype.render = function () {
+	        return (React.createElement("input", __assign({ type: "checkbox" }, FormElementProps_1.removeProps(this.props, "value"), { checked: this.props.value.get() || false, ref: this.indeterminate, onChange: this.changed })));
+	    };
+	    return CheckBox;
+	}(React.Component));
+	__decorate([
+	    mobx_1.action.bound
+	], CheckBox.prototype, "changed", null);
+	CheckBox = __decorate([
+	    mobx_react_1.observer
+	], CheckBox);
+	exports.CheckBox = CheckBox;
+
+
+/***/ },
+/* 184 */
+/***/ function(module, exports) {
+
+	"use strict";
+	function removeProps(props) {
+	    var names = [];
+	    for (var _i = 1; _i < arguments.length; _i++) {
+	        names[_i - 1] = arguments[_i];
+	    }
+	    var clone = Object.assign({}, props);
+	    for (var _a = 0, names_1 = names; _a < names_1.length; _a++) {
+	        var name_1 = names_1[_a];
+	        delete clone[name_1];
+	    }
+	    return clone;
+	}
+	exports.removeProps = removeProps;
+
+
+/***/ },
+/* 185 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __extends = (this && this.__extends) || function (d, b) {
+	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+	    function __() { this.constructor = d; }
+	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	};
+	var __assign = (this && this.__assign) || Object.assign || function(t) {
+	    for (var s, i = 1, n = arguments.length; i < n; i++) {
+	        s = arguments[i];
+	        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+	            t[p] = s[p];
+	    }
+	    return t;
+	};
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var React = __webpack_require__(1);
+	var mobx_1 = __webpack_require__(180);
+	var mobx_react_1 = __webpack_require__(181);
+	var FormElementProps_1 = __webpack_require__(184);
+	var TypedRadioButton = (function (_super) {
+	    __extends(TypedRadioButton, _super);
+	    function TypedRadioButton() {
+	        return _super !== null && _super.apply(this, arguments) || this;
+	    }
+	    TypedRadioButton.prototype.changed = function (ev) {
+	        if (ev.currentTarget.checked) {
+	            this.props.value.set(this.props.option);
+	        }
+	    };
+	    TypedRadioButton.prototype.render = function () {
+	        return React.createElement("input", __assign({ type: "radio" }, FormElementProps_1.removeProps(this.props, "value", "option"), { checked: this.props.value.get() === this.props.option, onChange: this.changed }));
+	    };
+	    return TypedRadioButton;
+	}(React.Component));
+	__decorate([
+	    mobx_1.action.bound
+	], TypedRadioButton.prototype, "changed", null);
+	TypedRadioButton = __decorate([
+	    mobx_react_1.observer
+	], TypedRadioButton);
+	exports.TypedRadioButton = TypedRadioButton;
+	var RadioButton = (function (_super) {
+	    __extends(RadioButton, _super);
+	    function RadioButton() {
+	        return _super !== null && _super.apply(this, arguments) || this;
+	    }
+	    return RadioButton;
+	}(TypedRadioButton));
+	exports.RadioButton = RadioButton;
+	var RadioButtonString = (function (_super) {
+	    __extends(RadioButtonString, _super);
+	    function RadioButtonString() {
+	        return _super !== null && _super.apply(this, arguments) || this;
+	    }
+	    return RadioButtonString;
+	}(TypedRadioButton));
+	exports.RadioButtonString = RadioButtonString;
+	var RadioButtonNumber = (function (_super) {
+	    __extends(RadioButtonNumber, _super);
+	    function RadioButtonNumber() {
+	        return _super !== null && _super.apply(this, arguments) || this;
+	    }
+	    return RadioButtonNumber;
+	}(TypedRadioButton));
+	exports.RadioButtonNumber = RadioButtonNumber;
+
+
+/***/ },
+/* 186 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __extends = (this && this.__extends) || function (d, b) {
+	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+	    function __() { this.constructor = d; }
+	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	};
+	var __assign = (this && this.__assign) || Object.assign || function(t) {
+	    for (var s, i = 1, n = arguments.length; i < n; i++) {
+	        s = arguments[i];
+	        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+	            t[p] = s[p];
+	    }
+	    return t;
+	};
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var React = __webpack_require__(1);
+	var mobx_1 = __webpack_require__(180);
+	var mobx_react_1 = __webpack_require__(181);
+	var FormElementProps_1 = __webpack_require__(184);
+	var TypedSelect = TypedSelect_1 = (function (_super) {
+	    __extends(TypedSelect, _super);
+	    function TypedSelect() {
+	        return _super !== null && _super.apply(this, arguments) || this;
+	    }
+	    TypedSelect.defaultLabels = function (value) {
+	        return value + "";
+	    };
+	    TypedSelect.defaultKeys = function (value) {
+	        if (value === undefined) {
+	            return "undefined";
+	        }
+	        value = value.valueOf();
+	        return JSON.stringify(value);
+	    };
+	    TypedSelect.prototype.updateValue = function (ev) {
+	        var keys = this.props.keys || TypedSelect_1.defaultKeys;
+	        // Find a value in the list that coerces to the new value
+	        for (var _i = 0, _a = this.props.options; _i < _a.length; _i++) {
+	            var option = _a[_i];
+	            if (keys(option) === ev.currentTarget.value) {
+	                this.props.value.set(option);
+	                return;
+	            }
+	        }
+	    };
+	    TypedSelect.prototype.render = function () {
+	        var labels = this.props.labels || TypedSelect_1.defaultLabels;
+	        var keys = this.props.keys || TypedSelect_1.defaultKeys;
+	        var selectedValue = this.props.value.get();
+	        var selectedKey = keys(selectedValue);
+	        var options = this.props.options.map(function (option) { return ({
+	            key: keys(option),
+	            label: labels(option)
+	        }); });
+	        if (!options.some(function (option) { return option.key === selectedKey; })) {
+	            options = options.concat({
+	                key: selectedKey,
+	                label: labels(selectedValue)
+	            });
+	        }
+	        return (React.createElement("select", __assign({}, FormElementProps_1.removeProps(this.props, "value", "options", "labels", "keys", "size"), { value: selectedKey, onChange: this.updateValue }), options.map(function (option) { return React.createElement("option", { key: option.key, value: option.key }, option.label); })));
+	    };
+	    return TypedSelect;
+	}(React.Component));
+	__decorate([
+	    mobx_1.action.bound
+	], TypedSelect.prototype, "updateValue", null);
+	TypedSelect = TypedSelect_1 = __decorate([
+	    mobx_react_1.observer
+	], TypedSelect);
+	exports.TypedSelect = TypedSelect;
+	var Select = (function (_super) {
+	    __extends(Select, _super);
+	    function Select() {
+	        return _super !== null && _super.apply(this, arguments) || this;
+	    }
+	    return Select;
+	}(TypedSelect));
+	exports.Select = Select;
+	var SelectString = (function (_super) {
+	    __extends(SelectString, _super);
+	    function SelectString() {
+	        return _super !== null && _super.apply(this, arguments) || this;
+	    }
+	    return SelectString;
+	}(TypedSelect));
+	exports.SelectString = SelectString;
+	var SelectNumber = (function (_super) {
+	    __extends(SelectNumber, _super);
+	    function SelectNumber() {
+	        return _super !== null && _super.apply(this, arguments) || this;
+	    }
+	    return SelectNumber;
+	}(TypedSelect));
+	exports.SelectNumber = SelectNumber;
+	var TypedSelect_1;
+
+
+/***/ },
+/* 187 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __extends = (this && this.__extends) || function (d, b) {
+	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+	    function __() { this.constructor = d; }
+	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	};
+	var __assign = (this && this.__assign) || Object.assign || function(t) {
+	    for (var s, i = 1, n = arguments.length; i < n; i++) {
+	        s = arguments[i];
+	        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+	            t[p] = s[p];
+	    }
+	    return t;
+	};
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var React = __webpack_require__(1);
+	var mobx_1 = __webpack_require__(180);
+	var mobx_react_1 = __webpack_require__(181);
+	var FormElementProps_1 = __webpack_require__(184);
+	var Rules = __webpack_require__(188);
+	var TextInput = (function (_super) {
+	    __extends(TextInput, _super);
+	    function TextInput() {
+	        return _super !== null && _super.apply(this, arguments) || this;
+	    }
+	    TextInput.prototype.changed = function (e) {
+	        this.props.value.set(e.currentTarget.value);
+	    };
+	    TextInput.prototype.render = function () {
+	        return (React.createElement("input", __assign({ type: "text" }, FormElementProps_1.removeProps(this.props, "value"), Rules.props(this.props.value, this.props), { value: this.props.value.get(), onChange: this.changed })));
+	    };
+	    return TextInput;
+	}(React.Component));
+	__decorate([
+	    mobx_1.action.bound
+	], TextInput.prototype, "changed", null);
+	TextInput = __decorate([
+	    mobx_react_1.observer
+	], TextInput);
+	exports.TextInput = TextInput;
+
+
+/***/ },
+/* 188 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
 	var mobx_1 = __webpack_require__(180);
 	function errors(loose) {
 	    var dupes = {}, result = [], list = !loose.error ? [] :
@@ -25426,7 +25750,21 @@
 
 
 /***/ },
-/* 183 */
+/* 189 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var React = __webpack_require__(1);
+	var rules_1 = __webpack_require__(188);
+	var mobx_react_1 = __webpack_require__(181);
+	function RuleBullets_(props) {
+	    return (React.createElement("ul", null, rules_1.errors(props.rule).map(function (error) { return React.createElement("li", { key: error }, error); })));
+	}
+	exports.RuleBullets = mobx_react_1.observer(RuleBullets_);
+
+
+/***/ },
+/* 190 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -25669,268 +26007,11 @@
 
 
 /***/ },
-/* 184 */
+/* 191 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var __extends = (this && this.__extends) || function (d, b) {
-	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-	    function __() { this.constructor = d; }
-	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-	};
-	var __assign = (this && this.__assign) || Object.assign || function(t) {
-	    for (var s, i = 1, n = arguments.length; i < n; i++) {
-	        s = arguments[i];
-	        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-	            t[p] = s[p];
-	    }
-	    return t;
-	};
-	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-	    return c > 3 && r && Object.defineProperty(target, key, r), r;
-	};
-	var React = __webpack_require__(1);
-	var mobx_1 = __webpack_require__(180);
-	var mobx_react_1 = __webpack_require__(181);
-	var FormElementProps_1 = __webpack_require__(185);
-	var Rules = __webpack_require__(182);
-	var TextInput = (function (_super) {
-	    __extends(TextInput, _super);
-	    function TextInput() {
-	        return _super !== null && _super.apply(this, arguments) || this;
-	    }
-	    TextInput.prototype.changed = function (e) {
-	        this.props.value.set(e.currentTarget.value);
-	    };
-	    TextInput.prototype.render = function () {
-	        return (React.createElement("input", __assign({ type: "text" }, FormElementProps_1.removeProps(this.props, "value"), Rules.props(this.props.value, this.props), { value: this.props.value.get(), onChange: this.changed })));
-	    };
-	    return TextInput;
-	}(React.Component));
-	__decorate([
-	    mobx_1.action.bound
-	], TextInput.prototype, "changed", null);
-	TextInput = __decorate([
-	    mobx_react_1.observer
-	], TextInput);
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = TextInput;
-
-
-/***/ },
-/* 185 */
-/***/ function(module, exports) {
-
-	"use strict";
-	function removeProps(props) {
-	    var names = [];
-	    for (var _i = 1; _i < arguments.length; _i++) {
-	        names[_i - 1] = arguments[_i];
-	    }
-	    var clone = Object.assign({}, props);
-	    for (var _a = 0, names_1 = names; _a < names_1.length; _a++) {
-	        var name_1 = names_1[_a];
-	        delete clone[name_1];
-	    }
-	    return clone;
-	}
-	exports.removeProps = removeProps;
-
-
-/***/ },
-/* 186 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	var React = __webpack_require__(1);
-	var rules_1 = __webpack_require__(182);
-	var mobx_react_1 = __webpack_require__(181);
-	function ErrorBullets(props) {
-	    return (React.createElement("ul", null, rules_1.errors(props.rule).map(function (error) { return React.createElement("li", { key: error }, error); })));
-	}
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = mobx_react_1.observer(ErrorBullets);
-
-
-/***/ },
-/* 187 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	var __extends = (this && this.__extends) || function (d, b) {
-	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-	    function __() { this.constructor = d; }
-	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-	};
-	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-	    return c > 3 && r && Object.defineProperty(target, key, r), r;
-	};
-	var React = __webpack_require__(1);
-	var mobx_react_1 = __webpack_require__(181);
-	var Select_1 = __webpack_require__(188);
-	var box_1 = __webpack_require__(189);
-	var ViewState_1 = __webpack_require__(191);
-	var TagList_1 = __webpack_require__(197);
-	var SimpsonEditor_1 = __webpack_require__(200);
-	var SimpsonsSelectorButtons_1 = __webpack_require__(201);
-	var SelectSimpson = (function (_super) {
-	    __extends(SelectSimpson, _super);
-	    function SelectSimpson() {
-	        return _super !== null && _super.apply(this, arguments) || this;
-	    }
-	    return SelectSimpson;
-	}(Select_1.default));
-	var Simpsons = (function (_super) {
-	    __extends(Simpsons, _super);
-	    function Simpsons() {
-	        var _this = _super !== null && _super.apply(this, arguments) || this;
-	        _this.viewState = new ViewState_1.default();
-	        return _this;
-	    }
-	    Simpsons.prototype.render = function () {
-	        var state = this.viewState;
-	        var selected = box_1.box(state).selected;
-	        return (React.createElement("div", { className: "simpsons" },
-	            React.createElement("fieldset", null,
-	                React.createElement("legend", null, "Tags"),
-	                React.createElement(TagList_1.default, { tags: state.allTags.result })),
-	            state.filtered.length ? (React.createElement("fieldset", null,
-	                React.createElement("legend", null, "Simpsons"),
-	                React.createElement(SimpsonsSelectorButtons_1.default, { simpsons: state.filtered, selected: selected }),
-	                React.createElement(SelectSimpson, { options: state.filtered, value: selected, labels: function (s) { return s.name.model; }, keys: function (s) { return s.id; } }))) : undefined,
-	            state.filtered.indexOf(state.selected) !== -1 ? (React.createElement("fieldset", null,
-	                React.createElement("legend", null, "Simpson"),
-	                React.createElement(SimpsonEditor_1.default, { simpson: state.selected }))) : undefined));
-	    };
-	    return Simpsons;
-	}(React.Component));
-	Simpsons = __decorate([
-	    mobx_react_1.observer
-	], Simpsons);
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = Simpsons;
-
-
-/***/ },
-/* 188 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	var __extends = (this && this.__extends) || function (d, b) {
-	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-	    function __() { this.constructor = d; }
-	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-	};
-	var __assign = (this && this.__assign) || Object.assign || function(t) {
-	    for (var s, i = 1, n = arguments.length; i < n; i++) {
-	        s = arguments[i];
-	        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-	            t[p] = s[p];
-	    }
-	    return t;
-	};
-	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-	    return c > 3 && r && Object.defineProperty(target, key, r), r;
-	};
-	var React = __webpack_require__(1);
-	var mobx_1 = __webpack_require__(180);
-	var mobx_react_1 = __webpack_require__(181);
-	var FormElementProps_1 = __webpack_require__(185);
-	var TypedSelect = TypedSelect_1 = (function (_super) {
-	    __extends(TypedSelect, _super);
-	    function TypedSelect() {
-	        return _super !== null && _super.apply(this, arguments) || this;
-	    }
-	    TypedSelect.defaultLabels = function (value) {
-	        return value + "";
-	    };
-	    TypedSelect.defaultKeys = function (value) {
-	        if (value === undefined) {
-	            return "undefined";
-	        }
-	        value = value.valueOf();
-	        return JSON.stringify(value);
-	    };
-	    TypedSelect.prototype.updateValue = function (ev) {
-	        var keys = this.props.keys || TypedSelect_1.defaultKeys;
-	        // Find a value in the list that coerces to the new value
-	        for (var _i = 0, _a = this.props.options; _i < _a.length; _i++) {
-	            var option = _a[_i];
-	            if (keys(option) === ev.currentTarget.value) {
-	                this.props.value.set(option);
-	                return;
-	            }
-	        }
-	    };
-	    TypedSelect.prototype.render = function () {
-	        var labels = this.props.labels || TypedSelect_1.defaultLabels;
-	        var keys = this.props.keys || TypedSelect_1.defaultKeys;
-	        var selectedValue = this.props.value.get();
-	        var selectedKey = keys(selectedValue);
-	        var options = this.props.options.map(function (option) { return ({
-	            key: keys(option),
-	            label: labels(option)
-	        }); });
-	        if (!options.some(function (option) { return option.key === selectedKey; })) {
-	            options = options.concat({
-	                key: selectedKey,
-	                label: labels(selectedValue)
-	            });
-	        }
-	        return (React.createElement("select", __assign({}, FormElementProps_1.removeProps(this.props, "value", "options", "labels", "keys", "size"), { value: selectedKey, onChange: this.updateValue }), options.map(function (option) { return React.createElement("option", { key: option.key, value: option.key }, option.label); })));
-	    };
-	    return TypedSelect;
-	}(React.Component));
-	__decorate([
-	    mobx_1.action.bound
-	], TypedSelect.prototype, "updateValue", null);
-	TypedSelect = TypedSelect_1 = __decorate([
-	    mobx_react_1.observer
-	], TypedSelect);
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = TypedSelect;
-	var Select = (function (_super) {
-	    __extends(Select, _super);
-	    function Select() {
-	        return _super !== null && _super.apply(this, arguments) || this;
-	    }
-	    return Select;
-	}(TypedSelect));
-	exports.Select = Select;
-	var SelectString = (function (_super) {
-	    __extends(SelectString, _super);
-	    function SelectString() {
-	        return _super !== null && _super.apply(this, arguments) || this;
-	    }
-	    return SelectString;
-	}(TypedSelect));
-	exports.SelectString = SelectString;
-	var SelectNumber = (function (_super) {
-	    __extends(SelectNumber, _super);
-	    function SelectNumber() {
-	        return _super !== null && _super.apply(this, arguments) || this;
-	    }
-	    return SelectNumber;
-	}(TypedSelect));
-	exports.SelectNumber = SelectNumber;
-	var TypedSelect_1;
-
-
-/***/ },
-/* 189 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	var boxm_1 = __webpack_require__(190);
+	var boxm_1 = __webpack_require__(192);
 	var mobx_1 = __webpack_require__(180);
 	exports.box = boxm_1.boxer(function (obj, key) {
 	    var atom = (mobx_1.isObservable(obj, key) || mobx_1.isComputed(obj, key))
@@ -25940,7 +26021,7 @@
 
 
 /***/ },
-/* 190 */
+/* 192 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -25981,606 +26062,7 @@
 	//# sourceMappingURL=index.js.map
 
 /***/ },
-/* 191 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-	    return c > 3 && r && Object.defineProperty(target, key, r), r;
-	};
-	var mobx_1 = __webpack_require__(180);
-	var mapped_array_mobx_1 = __webpack_require__(192);
-	var data_1 = __webpack_require__(193);
-	var TagState_1 = __webpack_require__(194);
-	var Simpson_1 = __webpack_require__(195);
-	function overlapping(a, b) {
-	    return a.some(function (fromA) { return b.some(function (fromB) { return fromA == fromB; }); });
-	}
-	var ViewState = (function () {
-	    function ViewState() {
-	        var _this = this;
-	        this.simpsons = data_1.default.map(function (s, i) { return new Simpson_1.default(i + "", s.name, s.age, s.tags); });
-	        this.selected = new Simpson_1.default("", "(None)", 0, []);
-	        this.allTags = new mapped_array_mobx_1.MappedArray(function () { return _this.allTagNames; }, function (t) { return t; }, function (t) { return new TagState_1.default(t); });
-	    }
-	    Object.defineProperty(ViewState.prototype, "allTagNames", {
-	        get: function () {
-	            var result = {};
-	            for (var _i = 0, _a = this.simpsons; _i < _a.length; _i++) {
-	                var s = _a[_i];
-	                for (var _b = 0, _c = s.tags.model; _b < _c.length; _b++) {
-	                    var t = _c[_b];
-	                    result[t] = true;
-	                }
-	            }
-	            return Object.keys(result).sort();
-	        },
-	        enumerable: true,
-	        configurable: true
-	    });
-	    Object.defineProperty(ViewState.prototype, "selectedTags", {
-	        get: function () {
-	            return this.allTags.result.filter(function (t) { return t.checked; }).map(function (t) { return t.name; });
-	        },
-	        enumerable: true,
-	        configurable: true
-	    });
-	    Object.defineProperty(ViewState.prototype, "filtered", {
-	        get: function () {
-	            var _this = this;
-	            return this.simpsons.filter(function (s) { return overlapping(_this.selectedTags, s.tags.model); });
-	        },
-	        enumerable: true,
-	        configurable: true
-	    });
-	    return ViewState;
-	}());
-	__decorate([
-	    mobx_1.observable
-	], ViewState.prototype, "simpsons", void 0);
-	__decorate([
-	    mobx_1.observable
-	], ViewState.prototype, "selected", void 0);
-	__decorate([
-	    mobx_1.computed
-	], ViewState.prototype, "allTagNames", null);
-	__decorate([
-	    mobx_1.computed
-	], ViewState.prototype, "selectedTags", null);
-	__decorate([
-	    mobx_1.computed
-	], ViewState.prototype, "filtered", null);
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = ViewState;
-
-
-/***/ },
-/* 192 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	var mobx_1 = __webpack_require__(180);
-	var MappedArray = (function () {
-	    function MappedArray(input, getKey, createModel, debugName) {
-	        var _this = this;
-	        this.input = input;
-	        this.getKey = getKey;
-	        this.createModel = createModel;
-	        this.resultCache = [];
-	        this.modelCache = {};
-	        this.atom = new mobx_1.Atom(debugName || "MappedArray", function () { return _this.wake(); }, function () { return _this.sleep(); });
-	    }
-	    MappedArray.prototype.wake = function () {
-	        var _this = this;
-	        this.sleep();
-	        this.monitor = mobx_1.autorunAsync(function () {
-	            var input = _this.input();
-	            var newMap = {};
-	            var newResult = [];
-	            for (var _i = 0, input_1 = input; _i < input_1.length; _i++) {
-	                var item = input_1[_i];
-	                var key = _this.getKey(item);
-	                var model = _this.modelCache[key] ||
-	                    (_this.modelCache[key] = _this.createModel(item));
-	                newMap[key] = model;
-	                newResult.push(model);
-	            }
-	            _this.resultCache = newResult;
-	            _this.modelCache = newMap;
-	            _this.atom.reportChanged();
-	        });
-	    };
-	    MappedArray.prototype.sleep = function () {
-	        var monitor = this.monitor;
-	        this.monitor = undefined;
-	        if (monitor) {
-	            monitor();
-	        }
-	    };
-	    Object.defineProperty(MappedArray.prototype, "result", {
-	        get: function () {
-	            this.atom.reportObserved();
-	            return this.resultCache;
-	        },
-	        enumerable: true,
-	        configurable: true
-	    });
-	    return MappedArray;
-	}());
-	exports.MappedArray = MappedArray;
-	//# sourceMappingURL=index.js.map
-
-/***/ },
 /* 193 */
-/***/ function(module, exports) {
-
-	"use strict";
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = [{
-	        name: "Homer",
-	        age: 37,
-	        tags: ["male", "adult", "stupid"]
-	    }, {
-	        name: "Marge",
-	        age: 37,
-	        tags: ["female", "adult"]
-	    }, {
-	        name: "Bart",
-	        age: 10,
-	        tags: ["male", "child", "stupid"],
-	    }, {
-	        name: "Lisa",
-	        age: 8,
-	        tags: ["female", "child", "smart"]
-	    }, {
-	        name: "Maggie",
-	        age: 2,
-	        tags: ["female", "baby", "smart"]
-	    }, {
-	        name: "Grandpa",
-	        age: 78,
-	        tags: ["male", "elderly", "stupid"]
-	    }];
-
-
-/***/ },
-/* 194 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-	    return c > 3 && r && Object.defineProperty(target, key, r), r;
-	};
-	var mobx_1 = __webpack_require__(180);
-	var TagState = (function () {
-	    function TagState(name) {
-	        this.name = name;
-	        this.checked = false;
-	    }
-	    return TagState;
-	}());
-	__decorate([
-	    mobx_1.observable
-	], TagState.prototype, "checked", void 0);
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = TagState;
-
-
-/***/ },
-/* 195 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	var field_1 = __webpack_require__(183);
-	var rules_1 = __webpack_require__(182);
-	var tagsAsString_1 = __webpack_require__(196);
-	var Simpson = (function () {
-	    function Simpson(id, name, age, tags) {
-	        this.id = id;
-	        this.name = field_1.field(field_1.stringLimits(1, 20))
-	            .create("", "Name");
-	        this.age = field_1.field(field_1.numberLimits(0, 120))
-	            .also(field_1.numberAsString(0))
-	            .create(0, "Age");
-	        this.tags = field_1.field(tagsAsString_1.default)
-	            .create([], "Tags");
-	        this.rule = rules_1.rules([this.name, this.age, this.tags]);
-	        this.name.model = name;
-	        this.age.model = age;
-	        this.tags.model = tags;
-	    }
-	    return Simpson;
-	}());
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = Simpson;
-	(function (_) { return _; });
-	(function (_) { return _; });
-
-
-/***/ },
-/* 196 */
-/***/ function(module, exports) {
-
-	"use strict";
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = {
-	    render: function (value) {
-	        return value.slice(0).sort().join(" ");
-	    },
-	    parse: function (str) {
-	        return str.split(/\s+/).filter(function (s) { return s; }).sort();
-	    }
-	};
-
-
-/***/ },
-/* 197 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	var React = __webpack_require__(1);
-	var mobx_react_1 = __webpack_require__(181);
-	var Tag_1 = __webpack_require__(198);
-	function TagList(_a) {
-	    var tags = _a.tags;
-	    return (React.createElement("div", null, tags.map(function (tag) { return React.createElement("div", { key: tag.name },
-	        React.createElement(Tag_1.default, { tag: tag })); })));
-	}
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = mobx_react_1.observer(TagList);
-
-
-/***/ },
-/* 198 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	var React = __webpack_require__(1);
-	var mobx_react_1 = __webpack_require__(181);
-	var CheckBox_1 = __webpack_require__(199);
-	var box_1 = __webpack_require__(189);
-	function Tag(_a) {
-	    var tag = _a.tag;
-	    return React.createElement("label", null,
-	        React.createElement(CheckBox_1.default, { value: box_1.box(tag).checked }),
-	        tag.name);
-	}
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = mobx_react_1.observer(Tag);
-
-
-/***/ },
-/* 199 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	var __extends = (this && this.__extends) || function (d, b) {
-	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-	    function __() { this.constructor = d; }
-	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-	};
-	var __assign = (this && this.__assign) || Object.assign || function(t) {
-	    for (var s, i = 1, n = arguments.length; i < n; i++) {
-	        s = arguments[i];
-	        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-	            t[p] = s[p];
-	    }
-	    return t;
-	};
-	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-	    return c > 3 && r && Object.defineProperty(target, key, r), r;
-	};
-	var React = __webpack_require__(1);
-	var mobx_1 = __webpack_require__(180);
-	var mobx_react_1 = __webpack_require__(181);
-	var FormElementProps_1 = __webpack_require__(185);
-	var CheckBox = (function (_super) {
-	    __extends(CheckBox, _super);
-	    function CheckBox() {
-	        var _this = _super !== null && _super.apply(this, arguments) || this;
-	        _this.indeterminate = function (input) {
-	            if (input) {
-	                _this.quit = mobx_1.autorun(function () { return input.indeterminate = _this.props.value.get() === undefined; });
-	            }
-	            else {
-	                _this.quit();
-	            }
-	        };
-	        return _this;
-	    }
-	    CheckBox.prototype.changed = function (e) {
-	        this.props.value.set(e.currentTarget.checked);
-	    };
-	    CheckBox.prototype.render = function () {
-	        return (React.createElement("input", __assign({ type: "checkbox" }, FormElementProps_1.removeProps(this.props, "value"), { checked: this.props.value.get() || false, ref: this.indeterminate, onChange: this.changed })));
-	    };
-	    return CheckBox;
-	}(React.Component));
-	__decorate([
-	    mobx_1.action.bound
-	], CheckBox.prototype, "changed", null);
-	CheckBox = __decorate([
-	    mobx_react_1.observer
-	], CheckBox);
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = CheckBox;
-
-
-/***/ },
-/* 200 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	var React = __webpack_require__(1);
-	var mobx_react_1 = __webpack_require__(181);
-	var TextInput_1 = __webpack_require__(184);
-	var RuleBullets_1 = __webpack_require__(186);
-	function SimpsonEditor(_a) {
-	    var simpson = _a.simpson;
-	    return (React.createElement("div", null,
-	        React.createElement("div", null,
-	            React.createElement("label", null,
-	                "Name ",
-	                React.createElement(TextInput_1.default, { value: simpson.name }))),
-	        React.createElement("div", null,
-	            React.createElement("label", null,
-	                "Age ",
-	                React.createElement(TextInput_1.default, { value: simpson.age }))),
-	        React.createElement("div", null,
-	            React.createElement("label", null,
-	                "Tags ",
-	                React.createElement(TextInput_1.default, { value: simpson.tags }))),
-	        React.createElement(RuleBullets_1.default, { rule: simpson.rule })));
-	}
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = mobx_react_1.observer(SimpsonEditor);
-
-
-/***/ },
-/* 201 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	var __extends = (this && this.__extends) || function (d, b) {
-	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-	    function __() { this.constructor = d; }
-	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-	};
-	var React = __webpack_require__(1);
-	var mobx_react_1 = __webpack_require__(181);
-	var RadioButton_1 = __webpack_require__(202);
-	var SimpsonRadioButton = (function (_super) {
-	    __extends(SimpsonRadioButton, _super);
-	    function SimpsonRadioButton() {
-	        return _super !== null && _super.apply(this, arguments) || this;
-	    }
-	    return SimpsonRadioButton;
-	}(RadioButton_1.default));
-	function SimpsonsSelectorButtons(_a) {
-	    var simpsons = _a.simpsons, selected = _a.selected;
-	    return (React.createElement("div", null, simpsons.map(function (item) { return (React.createElement("div", { key: item.id },
-	        React.createElement("label", null,
-	            React.createElement(SimpsonRadioButton, { option: item, value: selected }),
-	            item.name.model,
-	            " (",
-	            item.age.model,
-	            ") ",
-	            item.tags.model.join(", ")))); })));
-	}
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = mobx_react_1.observer(SimpsonsSelectorButtons);
-
-
-/***/ },
-/* 202 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	var __extends = (this && this.__extends) || function (d, b) {
-	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-	    function __() { this.constructor = d; }
-	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-	};
-	var __assign = (this && this.__assign) || Object.assign || function(t) {
-	    for (var s, i = 1, n = arguments.length; i < n; i++) {
-	        s = arguments[i];
-	        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-	            t[p] = s[p];
-	    }
-	    return t;
-	};
-	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-	    return c > 3 && r && Object.defineProperty(target, key, r), r;
-	};
-	var React = __webpack_require__(1);
-	var mobx_1 = __webpack_require__(180);
-	var mobx_react_1 = __webpack_require__(181);
-	var FormElementProps_1 = __webpack_require__(185);
-	var TypedRadioButton = (function (_super) {
-	    __extends(TypedRadioButton, _super);
-	    function TypedRadioButton() {
-	        return _super !== null && _super.apply(this, arguments) || this;
-	    }
-	    TypedRadioButton.prototype.changed = function (ev) {
-	        if (ev.currentTarget.checked) {
-	            this.props.value.set(this.props.option);
-	        }
-	    };
-	    TypedRadioButton.prototype.render = function () {
-	        return React.createElement("input", __assign({ type: "radio" }, FormElementProps_1.removeProps(this.props, "value", "option"), { checked: this.props.value.get() === this.props.option, onChange: this.changed }));
-	    };
-	    return TypedRadioButton;
-	}(React.Component));
-	__decorate([
-	    mobx_1.action.bound
-	], TypedRadioButton.prototype, "changed", null);
-	TypedRadioButton = __decorate([
-	    mobx_react_1.observer
-	], TypedRadioButton);
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = TypedRadioButton;
-	var RadioButton = (function (_super) {
-	    __extends(RadioButton, _super);
-	    function RadioButton() {
-	        return _super !== null && _super.apply(this, arguments) || this;
-	    }
-	    return RadioButton;
-	}(TypedRadioButton));
-	exports.RadioButton = RadioButton;
-	var RadioButtonString = (function (_super) {
-	    __extends(RadioButtonString, _super);
-	    function RadioButtonString() {
-	        return _super !== null && _super.apply(this, arguments) || this;
-	    }
-	    return RadioButtonString;
-	}(TypedRadioButton));
-	exports.RadioButtonString = RadioButtonString;
-	var RadioButtonNumber = (function (_super) {
-	    __extends(RadioButtonNumber, _super);
-	    function RadioButtonNumber() {
-	        return _super !== null && _super.apply(this, arguments) || this;
-	    }
-	    return RadioButtonNumber;
-	}(TypedRadioButton));
-	exports.RadioButtonNumber = RadioButtonNumber;
-
-
-/***/ },
-/* 203 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	var __extends = (this && this.__extends) || function (d, b) {
-	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-	    function __() { this.constructor = d; }
-	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-	};
-	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-	    return c > 3 && r && Object.defineProperty(target, key, r), r;
-	};
-	var React = __webpack_require__(1);
-	var mobx_1 = __webpack_require__(180);
-	var box_1 = __webpack_require__(189);
-	var rules_1 = __webpack_require__(182);
-	var field_1 = __webpack_require__(183);
-	var project_1 = __webpack_require__(204);
-	var TextInput_1 = __webpack_require__(184);
-	var RuleBullets_1 = __webpack_require__(186);
-	// Underlying everything is a very pure unadorned MobX model
-	var Model = (function () {
-	    function Model() {
-	        this.a = 1;
-	        this.b = 2;
-	    }
-	    Object.defineProperty(Model.prototype, "product", {
-	        get: function () {
-	            return this.a * this.b;
-	        },
-	        enumerable: true,
-	        configurable: true
-	    });
-	    Object.defineProperty(Model.prototype, "invalid", {
-	        get: function () {
-	            return (this.a + this.b > 10) ?
-	                "Total " + this.a + " + " + this.b + " is too big" : undefined;
-	        },
-	        enumerable: true,
-	        configurable: true
-	    });
-	    return Model;
-	}());
-	__decorate([
-	    mobx_1.observable
-	], Model.prototype, "a", void 0);
-	__decorate([
-	    mobx_1.observable
-	], Model.prototype, "b", void 0);
-	__decorate([
-	    mobx_1.computed
-	], Model.prototype, "product", null);
-	__decorate([
-	    mobx_1.computed
-	], Model.prototype, "invalid", null);
-	var dynamicDecimals = {
-	    render: function (value) {
-	        return field_1.numberAsString(decimalPlaces.get()).render(value);
-	    },
-	    parse: function (value) {
-	        return field_1.numberAsString(decimalPlaces.get()).parse(value);
-	    }
-	};
-	var decimalPlaces = mobx_1.observable.box(2);
-	// Build a component that renders our model, first by projecting it into a view-model
-	var Multiplier = project_1.project(function (model) {
-	    var factor = field_1.field(field_1.numberLimits(1, 10)).also(dynamicDecimals);
-	    var a = factor.use(box_1.box(model).a, "A"), b = factor.use(box_1.box(model).b, "B"), validation = rules_1.rules([a, b, rules_1.rule(function () { return model.invalid; })]);
-	    return { a: a, b: b, validation: validation }; // this is the view-model that will actually be rendered
-	}).render(function (props) {
-	    // The model and view props are automatically blended into whatever
-	    // we require (as specified in the type argument to `render`)
-	    var _a = props.view, a = _a.a, b = _a.b, validation = _a.validation;
-	    var product = props.model.product;
-	    return (React.createElement("div", { style: { background: props.background } },
-	        React.createElement("div", null,
-	            React.createElement("label", null,
-	                "A = ",
-	                React.createElement(TextInput_1.default, { value: a }))),
-	        React.createElement("div", null,
-	            React.createElement("label", null,
-	                "B = ",
-	                React.createElement(TextInput_1.default, { value: b }))),
-	        React.createElement("div", null,
-	            "Product (",
-	            a.model,
-	            " * ",
-	            b.model,
-	            ") = ",
-	            product.toFixed(2)),
-	        React.createElement("hr", null),
-	        React.createElement(RuleBullets_1.default, { rule: validation })));
-	});
-	// As a demo, show two UIs bound to the same model
-	var TwinMultiplier = (function (_super) {
-	    __extends(TwinMultiplier, _super);
-	    function TwinMultiplier() {
-	        var _this = _super !== null && _super.apply(this, arguments) || this;
-	        _this.model = new Model();
-	        _this.decimalPlacesField = field_1.field(field_1.numberLimits(0, 6)).also(field_1.numberAsString(0)).use(decimalPlaces);
-	        return _this;
-	    }
-	    TwinMultiplier.prototype.render = function () {
-	        return (React.createElement("div", null,
-	            React.createElement("div", { className: "multiplier" },
-	                React.createElement(Multiplier, { model: this.model, background: "#0FB" })),
-	            React.createElement("div", { className: "multiplier" },
-	                React.createElement(Multiplier, { model: this.model, background: "#0BF" })),
-	            React.createElement("div", null,
-	                React.createElement("span", null, "Decimal places:"),
-	                React.createElement(TextInput_1.default, { value: this.decimalPlacesField }))));
-	    };
-	    return TwinMultiplier;
-	}(React.Component));
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = TwinMultiplier;
-
-
-/***/ },
-/* 204 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -26628,7 +26110,7 @@
 
 
 /***/ },
-/* 205 */
+/* 194 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -26646,8 +26128,198 @@
 	var React = __webpack_require__(1);
 	var mobx_1 = __webpack_require__(180);
 	var mobx_react_1 = __webpack_require__(181);
-	var box_1 = __webpack_require__(189);
-	var CheckBox_1 = __webpack_require__(199);
+	var index_1 = __webpack_require__(182);
+	var Multiplier = Multiplier_1 = (function (_super) {
+	    __extends(Multiplier, _super);
+	    function Multiplier() {
+	        var _this = _super !== null && _super.apply(this, arguments) || this;
+	        _this.a = Multiplier_1.factor.create(1, "A");
+	        _this.b = Multiplier_1.factor.create(12, "B");
+	        _this.limit = index_1.rule(function () {
+	            return (_this.a.model + _this.b.model > 10) ?
+	                "Total " + _this.a.model + " + " + _this.b.model + " is too big" : [];
+	        });
+	        _this.validation = index_1.rules([_this.a, _this.b, _this.limit]);
+	        return _this;
+	    }
+	    Object.defineProperty(Multiplier.prototype, "product", {
+	        get: function () { return this.a.model * this.b.model; },
+	        enumerable: true,
+	        configurable: true
+	    });
+	    Multiplier.prototype.render = function () {
+	        var _a = this, a = _a.a, b = _a.b, product = _a.product, validation = _a.validation;
+	        return (React.createElement("div", null,
+	            React.createElement("div", null,
+	                React.createElement("label", null,
+	                    "A = ",
+	                    React.createElement(index_1.TextInput, { value: a }))),
+	            React.createElement("div", null,
+	                React.createElement("label", null,
+	                    "B = ",
+	                    React.createElement(index_1.TextInput, { value: b }))),
+	            React.createElement("div", null,
+	                "Product (",
+	                a.model,
+	                " * ",
+	                b.model,
+	                ") = ",
+	                product),
+	            React.createElement("hr", null),
+	            React.createElement(index_1.RuleBullets, { rule: validation })));
+	    };
+	    return Multiplier;
+	}(React.Component));
+	Multiplier.factor = index_1.field(index_1.numberLimits(1, 10)).also(index_1.numberAsString(2));
+	__decorate([
+	    mobx_1.computed
+	], Multiplier.prototype, "product", null);
+	Multiplier = Multiplier_1 = __decorate([
+	    mobx_react_1.observer
+	], Multiplier);
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = Multiplier;
+	var Multiplier_1;
+
+
+/***/ },
+/* 195 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __extends = (this && this.__extends) || function (d, b) {
+	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+	    function __() { this.constructor = d; }
+	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	};
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var React = __webpack_require__(1);
+	var mobx_1 = __webpack_require__(180);
+	var index_1 = __webpack_require__(182);
+	// Underlying everything is a very pure unadorned MobX model
+	var Model = (function () {
+	    function Model() {
+	        this.a = 1;
+	        this.b = 2;
+	    }
+	    Object.defineProperty(Model.prototype, "product", {
+	        get: function () {
+	            return this.a * this.b;
+	        },
+	        enumerable: true,
+	        configurable: true
+	    });
+	    Object.defineProperty(Model.prototype, "invalid", {
+	        get: function () {
+	            return (this.a + this.b > 10) ?
+	                "Total " + this.a + " + " + this.b + " is too big" : undefined;
+	        },
+	        enumerable: true,
+	        configurable: true
+	    });
+	    return Model;
+	}());
+	__decorate([
+	    mobx_1.observable
+	], Model.prototype, "a", void 0);
+	__decorate([
+	    mobx_1.observable
+	], Model.prototype, "b", void 0);
+	__decorate([
+	    mobx_1.computed
+	], Model.prototype, "product", null);
+	__decorate([
+	    mobx_1.computed
+	], Model.prototype, "invalid", null);
+	var dynamicDecimals = {
+	    render: function (value) {
+	        return index_1.numberAsString(decimalPlaces.get()).render(value);
+	    },
+	    parse: function (value) {
+	        return index_1.numberAsString(decimalPlaces.get()).parse(value);
+	    }
+	};
+	var decimalPlaces = mobx_1.observable.box(2);
+	// Build a component that renders our model, first by projecting it into a view-model
+	var Multiplier = index_1.project(function (model) {
+	    var factor = index_1.field(index_1.numberLimits(1, 10)).also(dynamicDecimals);
+	    var a = factor.use(index_1.box(model).a, "A"), b = factor.use(index_1.box(model).b, "B"), validation = index_1.rules([a, b, index_1.rule(function () { return model.invalid; })]);
+	    return { a: a, b: b, validation: validation }; // this is the view-model that will actually be rendered
+	}).render(function (props) {
+	    // The model and view props are automatically blended into whatever
+	    // we require (as specified in the type argument to `render`)
+	    var _a = props.view, a = _a.a, b = _a.b, validation = _a.validation;
+	    var product = props.model.product;
+	    return (React.createElement("div", { style: { background: props.background } },
+	        React.createElement("div", null,
+	            React.createElement("label", null,
+	                "A = ",
+	                React.createElement(index_1.TextInput, { value: a }))),
+	        React.createElement("div", null,
+	            React.createElement("label", null,
+	                "B = ",
+	                React.createElement(index_1.TextInput, { value: b }))),
+	        React.createElement("div", null,
+	            "Product (",
+	            a.model,
+	            " * ",
+	            b.model,
+	            ") = ",
+	            product.toFixed(2)),
+	        React.createElement("hr", null),
+	        React.createElement(index_1.RuleBullets, { rule: validation })));
+	});
+	// As a demo, show two UIs bound to the same model
+	var TwinMultiplier = (function (_super) {
+	    __extends(TwinMultiplier, _super);
+	    function TwinMultiplier() {
+	        var _this = _super !== null && _super.apply(this, arguments) || this;
+	        _this.model = new Model();
+	        _this.decimalPlacesField = index_1.field(index_1.numberLimits(0, 6)).also(index_1.numberAsString(0)).use(decimalPlaces);
+	        return _this;
+	    }
+	    TwinMultiplier.prototype.render = function () {
+	        return (React.createElement("div", null,
+	            React.createElement("div", { className: "multiplier" },
+	                React.createElement(Multiplier, { model: this.model, background: "#0FB" })),
+	            React.createElement("div", { className: "multiplier" },
+	                React.createElement(Multiplier, { model: this.model, background: "#0BF" })),
+	            React.createElement("div", null,
+	                React.createElement("span", null, "Decimal places:"),
+	                React.createElement(index_1.TextInput, { value: this.decimalPlacesField }))));
+	    };
+	    return TwinMultiplier;
+	}(React.Component));
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = TwinMultiplier;
+
+
+/***/ },
+/* 196 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __extends = (this && this.__extends) || function (d, b) {
+	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+	    function __() { this.constructor = d; }
+	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	};
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var React = __webpack_require__(1);
+	var mobx_1 = __webpack_require__(180);
+	var mobx_react_1 = __webpack_require__(181);
+	var index_1 = __webpack_require__(182);
+	/** A LeafNode is a tree node which has no children and maintains its own check state */
 	var LeafNode = (function () {
 	    function LeafNode(label) {
 	        this.label = label;
@@ -26658,6 +26330,7 @@
 	__decorate([
 	    mobx_1.observable
 	], LeafNode.prototype, "state", void 0);
+	/** A ParentNode's check state is just a summary of its childrens' check states */
 	var ParentNode = (function () {
 	    function ParentNode(label) {
 	        var children = [];
@@ -26702,7 +26375,7 @@
 	    return (React.createElement("div", { className: "treeNode" },
 	        React.createElement("div", { className: "treeNodeHeader" },
 	            React.createElement("label", null,
-	                React.createElement(CheckBox_1.default, { value: box_1.box(props.node).state }),
+	                React.createElement(index_1.CheckBox, { value: index_1.box(props.node).state }),
 	                " ",
 	                props.node.label)),
 	        !props.node.children ? undefined : (React.createElement("div", { className: "treeNodeChildren" }, props.node.children.map(function (child) { return React.createElement(TreeNode, { key: child.label, node: child }); })))));
@@ -26727,6 +26400,361 @@
 	function buildModel() {
 	    return new ParentNode("Music", new ParentNode("The Beatles", new ParentNode("Please Please Me", new LeafNode("I Saw Her Standing There"), new LeafNode("Misery"), new LeafNode("Chains"), new LeafNode("Anna (Go With Him)"), new LeafNode("There's A Place"), new LeafNode("From Me To You"), new LeafNode("Please Please Me")), new ParentNode("Revolver", new LeafNode("Taxman"), new LeafNode("I'm Only Sleeping"), new LeafNode("Yellow Submarine"), new LeafNode("Eleanor Rigby"), new LeafNode("For No One"), new LeafNode("Good Day Sunshine"), new LeafNode("And Your Bird Can Sing"), new LeafNode("She Said, She Said"), new LeafNode("I Want To Tell You"), new LeafNode("Got To Get You Into My Life"), new LeafNode("Tomorrow Never Knows"))), new ParentNode("Vanilla Ice", new ParentNode("The Best of Vanilla Ice", new LeafNode("Ice Ice Baby"))));
 	}
+
+
+/***/ },
+/* 197 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __extends = (this && this.__extends) || function (d, b) {
+	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+	    function __() { this.constructor = d; }
+	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	};
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var React = __webpack_require__(1);
+	var mobx_react_1 = __webpack_require__(181);
+	var index_1 = __webpack_require__(182);
+	var ViewState_1 = __webpack_require__(198);
+	var TagList_1 = __webpack_require__(203);
+	var SimpsonEditor_1 = __webpack_require__(205);
+	var SimpsonsSelectorButtons_1 = __webpack_require__(206);
+	var SelectSimpson = (function (_super) {
+	    __extends(SelectSimpson, _super);
+	    function SelectSimpson() {
+	        return _super !== null && _super.apply(this, arguments) || this;
+	    }
+	    return SelectSimpson;
+	}(index_1.TypedSelect));
+	var Simpsons = (function (_super) {
+	    __extends(Simpsons, _super);
+	    function Simpsons() {
+	        var _this = _super !== null && _super.apply(this, arguments) || this;
+	        _this.viewState = new ViewState_1.default();
+	        return _this;
+	    }
+	    Simpsons.prototype.render = function () {
+	        var state = this.viewState;
+	        var selected = index_1.box(state).selected;
+	        return (React.createElement("div", { className: "simpsons" },
+	            React.createElement("fieldset", null,
+	                React.createElement("legend", null, "Tags"),
+	                React.createElement(TagList_1.default, { tags: state.allTags })),
+	            state.filtered.length ? (React.createElement("fieldset", null,
+	                React.createElement("legend", null, "Simpsons"),
+	                React.createElement(SimpsonsSelectorButtons_1.default, { simpsons: state.filtered, selected: selected }),
+	                React.createElement(SelectSimpson, { options: state.filtered, value: selected, labels: function (s) { return s.name.model; }, keys: function (s) { return s.id; } }))) : undefined,
+	            state.filtered.indexOf(state.selected) !== -1 ? (React.createElement("fieldset", null,
+	                React.createElement("legend", null, "Simpson"),
+	                React.createElement(SimpsonEditor_1.default, { simpson: state.selected }))) : undefined));
+	    };
+	    return Simpsons;
+	}(React.Component));
+	Simpsons = __decorate([
+	    mobx_react_1.observer
+	], Simpsons);
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = Simpsons;
+
+
+/***/ },
+/* 198 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var mobx_1 = __webpack_require__(180);
+	//import { MappedArray } from "mapped-array-mobx";
+	var data_1 = __webpack_require__(199);
+	var TagState_1 = __webpack_require__(200);
+	var Simpson_1 = __webpack_require__(201);
+	function overlapping(a, b) {
+	    return a.some(function (fromA) { return b.some(function (fromB) { return fromA == fromB; }); });
+	}
+	var ViewState = (function () {
+	    function ViewState() {
+	        this.simpsons = data_1.default.map(function (s, i) { return new Simpson_1.default(i + "", s.name, s.age, s.tags); });
+	        this.selected = new Simpson_1.default("", "(None)", 0, []);
+	        this.tagCache = {};
+	    }
+	    Object.defineProperty(ViewState.prototype, "allTagNames", {
+	        get: function () {
+	            var result = {};
+	            for (var _i = 0, _a = this.simpsons; _i < _a.length; _i++) {
+	                var s = _a[_i];
+	                for (var _b = 0, _c = s.tags.model; _b < _c.length; _b++) {
+	                    var t = _c[_b];
+	                    result[t] = true;
+	                }
+	            }
+	            return Object.keys(result).sort();
+	        },
+	        enumerable: true,
+	        configurable: true
+	    });
+	    ViewState.prototype.getTagState = function (name) {
+	        return this.tagCache[name] || (this.tagCache[name] = new TagState_1.default(name));
+	    };
+	    Object.defineProperty(ViewState.prototype, "allTags", {
+	        get: function () {
+	            var _this = this;
+	            return this.allTagNames.map(function (name) { return _this.getTagState(name); });
+	        },
+	        enumerable: true,
+	        configurable: true
+	    });
+	    Object.defineProperty(ViewState.prototype, "selectedTags", {
+	        get: function () {
+	            return this.allTags.filter(function (t) { return t.checked; }).map(function (t) { return t.name; });
+	        },
+	        enumerable: true,
+	        configurable: true
+	    });
+	    Object.defineProperty(ViewState.prototype, "filtered", {
+	        get: function () {
+	            var _this = this;
+	            return this.simpsons.filter(function (s) { return overlapping(_this.selectedTags, s.tags.model); });
+	        },
+	        enumerable: true,
+	        configurable: true
+	    });
+	    return ViewState;
+	}());
+	__decorate([
+	    mobx_1.observable
+	], ViewState.prototype, "simpsons", void 0);
+	__decorate([
+	    mobx_1.observable
+	], ViewState.prototype, "selected", void 0);
+	__decorate([
+	    mobx_1.computed
+	], ViewState.prototype, "allTagNames", null);
+	__decorate([
+	    mobx_1.computed
+	], ViewState.prototype, "allTags", null);
+	__decorate([
+	    mobx_1.computed
+	], ViewState.prototype, "selectedTags", null);
+	__decorate([
+	    mobx_1.computed
+	], ViewState.prototype, "filtered", null);
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = ViewState;
+
+
+/***/ },
+/* 199 */
+/***/ function(module, exports) {
+
+	"use strict";
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = [{
+	        name: "Homer",
+	        age: 37,
+	        tags: ["male", "adult", "stupid"]
+	    }, {
+	        name: "Marge",
+	        age: 37,
+	        tags: ["female", "adult"]
+	    }, {
+	        name: "Bart",
+	        age: 10,
+	        tags: ["male", "child", "stupid"],
+	    }, {
+	        name: "Lisa",
+	        age: 8,
+	        tags: ["female", "child", "smart"]
+	    }, {
+	        name: "Maggie",
+	        age: 2,
+	        tags: ["female", "baby", "smart"]
+	    }, {
+	        name: "Grandpa",
+	        age: 78,
+	        tags: ["male", "elderly", "stupid"]
+	    }];
+
+
+/***/ },
+/* 200 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var mobx_1 = __webpack_require__(180);
+	var TagState = (function () {
+	    function TagState(name) {
+	        this.name = name;
+	        this.checked = false;
+	    }
+	    return TagState;
+	}());
+	__decorate([
+	    mobx_1.observable
+	], TagState.prototype, "checked", void 0);
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = TagState;
+
+
+/***/ },
+/* 201 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var index_1 = __webpack_require__(182);
+	var tagsAsString_1 = __webpack_require__(202);
+	var Simpson = (function () {
+	    function Simpson(id, name, age, tags) {
+	        this.id = id;
+	        this.name = index_1.field(index_1.stringLimits(1, 20))
+	            .create("", "Name");
+	        this.age = index_1.field(index_1.numberLimits(0, 120))
+	            .also(index_1.numberAsString(0))
+	            .create(0, "Age");
+	        this.tags = index_1.field(tagsAsString_1.default)
+	            .create([], "Tags");
+	        this.rule = index_1.rules([this.name, this.age, this.tags]);
+	        this.name.model = name;
+	        this.age.model = age;
+	        this.tags.model = tags;
+	    }
+	    return Simpson;
+	}());
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = Simpson;
+	(function (_) { return _; });
+	(function (_) { return _; });
+
+
+/***/ },
+/* 202 */
+/***/ function(module, exports) {
+
+	"use strict";
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = {
+	    render: function (value) {
+	        return value.slice(0).sort().join(" ");
+	    },
+	    parse: function (str) {
+	        return str.split(/\s+/).filter(function (s) { return s; }).sort();
+	    }
+	};
+
+
+/***/ },
+/* 203 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var React = __webpack_require__(1);
+	var mobx_react_1 = __webpack_require__(181);
+	var Tag_1 = __webpack_require__(204);
+	function TagList(_a) {
+	    var tags = _a.tags;
+	    return (React.createElement("div", null, tags.map(function (tag) { return React.createElement("div", { key: tag.name },
+	        React.createElement(Tag_1.default, { tag: tag })); })));
+	}
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = mobx_react_1.observer(TagList);
+
+
+/***/ },
+/* 204 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var React = __webpack_require__(1);
+	var mobx_react_1 = __webpack_require__(181);
+	var index_1 = __webpack_require__(182);
+	function Tag(_a) {
+	    var tag = _a.tag;
+	    return React.createElement("label", null,
+	        React.createElement(index_1.CheckBox, { value: index_1.box(tag).checked }),
+	        tag.name);
+	}
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = mobx_react_1.observer(Tag);
+
+
+/***/ },
+/* 205 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var React = __webpack_require__(1);
+	var mobx_react_1 = __webpack_require__(181);
+	var index_1 = __webpack_require__(182);
+	function SimpsonEditor(_a) {
+	    var simpson = _a.simpson;
+	    return (React.createElement("div", null,
+	        React.createElement("div", null,
+	            React.createElement("label", null,
+	                "Name ",
+	                React.createElement(index_1.TextInput, { value: simpson.name }))),
+	        React.createElement("div", null,
+	            React.createElement("label", null,
+	                "Age ",
+	                React.createElement(index_1.TextInput, { value: simpson.age }))),
+	        React.createElement("div", null,
+	            React.createElement("label", null,
+	                "Tags ",
+	                React.createElement(index_1.TextInput, { value: simpson.tags }))),
+	        React.createElement(index_1.RuleBullets, { rule: simpson.rule })));
+	}
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = mobx_react_1.observer(SimpsonEditor);
+
+
+/***/ },
+/* 206 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __extends = (this && this.__extends) || function (d, b) {
+	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+	    function __() { this.constructor = d; }
+	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	};
+	var React = __webpack_require__(1);
+	var mobx_react_1 = __webpack_require__(181);
+	var index_1 = __webpack_require__(182);
+	var SimpsonRadioButton = (function (_super) {
+	    __extends(SimpsonRadioButton, _super);
+	    function SimpsonRadioButton() {
+	        return _super !== null && _super.apply(this, arguments) || this;
+	    }
+	    return SimpsonRadioButton;
+	}(index_1.TypedRadioButton));
+	function SimpsonsSelectorButtons(_a) {
+	    var simpsons = _a.simpsons, selected = _a.selected;
+	    return (React.createElement("div", null, simpsons.map(function (item) { return (React.createElement("div", { key: item.id },
+	        React.createElement("label", null,
+	            React.createElement(SimpsonRadioButton, { option: item, value: selected }),
+	            item.name.model,
+	            " (",
+	            item.age.model,
+	            ") ",
+	            item.tags.model.join(", ")))); })));
+	}
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = mobx_react_1.observer(SimpsonsSelectorButtons);
 
 
 /***/ }
