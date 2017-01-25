@@ -1,8 +1,7 @@
 import * as React from "react"
 import { observer } from "mobx-react";
 
-import TypedRadioButton from "../../../src/components/RadioButton";
-import { BoxedValue } from "../../../src/box";
+import { TypedRadioButton, BoxedValue } from "../../../../index";
 
 import Simpson from "../Simpson";
 

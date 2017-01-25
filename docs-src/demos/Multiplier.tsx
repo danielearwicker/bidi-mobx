@@ -3,11 +3,8 @@ import * as React from "react";
 import { computed } from "mobx";
 import { observer } from "mobx-react";
 
-import { rule, rules } from "../src/rules";
-import { field, numberAsString, numberLimits } from "../src/field"
-
-import TextInput from "../src/components/TextInput";
-import RuleBullets from "../src/components/RuleBullets";
+import { rule, rules, TextInput, RuleBullets, field, 
+    numberAsString, numberLimits } from "../../index";
 
 @observer
 export default class Multiplier extends React.Component<{}, {}> {

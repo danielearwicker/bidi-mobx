@@ -9,10 +9,16 @@ Declare your view model:
 ```ts
 export default class Person {
 
+    // A text field, validated to between 1-20 characters
     name = field(stringLimits(1, 20)).create("", "Name")
+
+    // A number field, zero decimal places, between 0-120
     age = field(numberLimits(0, 120)).also(numberAsString(0)).create(0, "Age");
+
+    // A field display "tags" using a custom format (array of strings)
     tags = field(tagsAsString).create([], "Tags");
 
+    // The combined validation state
     rule = rules([this.name, this.age, this.tags]);
 }
 ```
@@ -37,17 +43,19 @@ function PersonEditor({ person }: { person: Person }) {
 Use binding-ready simple form components:
 
 * `<CheckBox>`
-* `<RadioButton>` 
-* `<Select>` 
+* `<RadioButton>`
+* `<Select>`
 * `<TextInput>`
 
 Create your own two-way value adaptors:
 
 ```ts
 const tagsAsString = {
-    render(value: string[]) { 
-        return value.slice(0).sort().join(" "); 
+    // Render takes a model value and returns a view value
+    render(value: string[]) {
+        return value.slice(0).sort().join(" ");
     },
+    // Parse does the opposite (and is allowed to throw ValidationError)
     parse(str: string) { 
         return str.split(/\s+/).filter(s => s).sort();
     }
@@ -66,13 +74,9 @@ Gradually growing... [click here](https://danielearwicker.github.io/bidi-mobx/)
 You may need to define mobx as an external in your Webpack config [to avoid it being duplicated](https://github.com/danielearwicker/bidi-mobx/issues/4)
 
 ## WAT?
-There's a UI pattern with a stupid name: MVVM (Model-View-ViewModel), but it's a very cool idea. The takeaway is that a view needs to be supported by state data that is additional to the pure data being edited. [More discussion about this.](https://github.com/danielearwicker/bidi-mobx/blob/master/notes.md)
+There's a UI pattern with a stupid name: MVVM (Model/View/View-Model), but it's a very cool idea. The takeaway is that a view needs to be supported by state data that is additional to the pure data being edited. [More discussion about this.](https://github.com/danielearwicker/bidi-mobx/blob/master/notes.md)
 
-If you create a data model that reflects the structure of your UI, you can then load your pure model data into it and "bind" to it with a standard vocabulary of visual components. They are linked in both directions. Being declarative is beneficial for describing the flow of information from model to view, and it turns out to be just as beneficial in the opposite direction too. It's especially easy if you can use the same declarations for both. For a lot of apps it's the most simple, easy to maintain, easy to get right and *automatically performant* approach.
-
-The first JS library I know of that implemented this was [Knockout.js](http://knockoutjs.com). It included a pattern for modelling data, with `computed` and automatic observing (brilliant), and also its own quirky way of binding directly to the DOM (this part wasn't so great).
-
-So you could get started building UIs in the DOM, it came with a set of built-in handlers for `<input type="text">`, `<input type="checkbox">`, `<input type="radio">` and `<select>`.
+If you create a view-model that reflects the structure of your UI, you can then load your pure model data into it and "bind" to it with a standard vocabulary of visual components. They are linked in both directions. Being declarative is beneficial for describing the flow of information from model to view, and it turns out to be just as beneficial in the opposite direction too. It's especially easy if you can use the same declarations for both. For a lot of apps it's the most simple, easy to maintain, easy to get right and *automatically performant* approach.
 
 React already provides a beautiful component-based and declarative UI description system. [MobX](https://mobx.js.org/) provides automatic observing and `computed` (on a more sound basis than Knockout). So what else do we need?
 
@@ -96,7 +100,7 @@ The initial use case for this is using a `<TextInput>` for data that can be repr
 
 To support this, instead of declaring an observable property of type `number`:
 
-```ts`
+```ts
 @observable orderQuantity = 5
 ```
 
@@ -106,13 +110,21 @@ To support this, instead of declaring an observable property of type `number`:
 orderQuantity = field(numberAsString()).create(5)
 ```
 
-Now `orderQuantity` is "pre-boxed". It has `get`/`set` methods for the string version of the value, so it can be directly passed to `<TextInput>` to bind it:
+Or if you are "wrapping" an existing model object containing an `orderQuantity` number `@observable`:
+
+```ts
+orderQuantity = field(numberAsString()).use(box(myModel).orderQuantity)
+```
+
+(That is, box the model's `orderQuantity` number so you can `use` it as the underlying store for your field).
+
+Now the resulting `orderQuantity` field is "pre-boxed". It has `get`/`set` methods for the string version of the value, so it can be directly passed to `<TextInput>` to bind it:
 
 ```tsx
 <label>Quantity to order: <TextInput value={orderQuantity}/></label>
 ```
 
-It also has a sub-property (observable) called `model` that contains the number value which you can read/write freely.
+It also has a sub-property (observable) called `model` that contains the number value which you can read/write freely (if you called `use` then this is equivalent to reading/writing the underlying model property).
 
 In addition, it has an observable property called `errors` that contains an array of strings; if all is well, this array is empty. If the current text input is not valid, `errors` will contain one or more messages complaining to the user.
 
@@ -146,7 +158,7 @@ export interface Adaptor<View, Model> {
 }
 ```
 
-It specifies data transformation in two directions. The `parse` method is expected to throw an exception if it doesn't like the value it receives.
+It specifies data transformation in two directions. The `parse` method is expected to throw a `ValidationError` exception if it doesn't like the value it receives.
 
 You can cook up a pure validation adaptor (which doesn't change the value) with the `checker` function:
 

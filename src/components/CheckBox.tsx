@@ -9,7 +9,7 @@ export interface CheckBoxProps extends FormElementProps {
 }
 
 @observer
-export default class CheckBox extends React.Component<CheckBoxProps, {}> {
+export class CheckBox extends React.Component<CheckBoxProps, {}> {
 
     quit: Lambda;
 

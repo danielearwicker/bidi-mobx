@@ -1,9 +1,9 @@
 import { observable, computed } from "mobx";
-import { MappedArray } from "mapped-array-mobx";
+//import { MappedArray } from "mapped-array-mobx";
 
-import data from "../data";
+import data from "./data";
 import TagState from "./TagState";
-import Simpson from "../Simpson";
+import Simpson from "./Simpson";
 
 function overlapping<T>(a: T[], b: T[]) {
     return a.some(fromA => b.some(fromB => fromA == fromB));
@@ -24,11 +24,18 @@ export default class ViewState {
         return Object.keys(result).sort();
     }
 
-    allTags = new MappedArray<string, TagState, string>(
-        () => this.allTagNames, t => t, t => new TagState(t));
+    tagCache: { [name: string]: TagState } = {};
+
+    getTagState(name: string) {
+        return this.tagCache[name] || (this.tagCache[name] = new TagState(name));
+    }
+
+    @computed get allTags() {
+        return this.allTagNames.map(name => this.getTagState(name));
+    }
 
     @computed get selectedTags() {
-        return this.allTags.result.filter(t => t.checked).map(t => t.name);
+        return this.allTags.filter(t => t.checked).map(t => t.name);
     }
 
     @computed get filtered() {

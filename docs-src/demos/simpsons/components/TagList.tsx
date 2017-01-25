@@ -1,7 +1,7 @@
 import * as React from "react"
 import { observer } from "mobx-react";
 
-import TagState from "./TagState";
+import TagState from "../TagState";
 import Tag from "./Tag";
 
 function TagList({ tags }: { tags: TagState[] }) {

@@ -1,8 +1,7 @@
 import * as React from "react"
 import { observer } from "mobx-react";
 
-import TextInput from "../../../src/components/TextInput";
-import RuleBullets from "../../../src/components/RuleBullets";
+import { TextInput, RuleBullets } from "../../../../index";
 
 import Simpson from "../Simpson";
 

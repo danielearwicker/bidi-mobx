@@ -1,5 +1,5 @@
-import { field, numberAsString, stringLimits, numberLimits, Field } from "../../src/field";
-import { rules, Rule } from "../../src/rules";
+import { rules, Rule, field, numberAsString, 
+    stringLimits, numberLimits, Field } from "../../../index";
 
 import tagsAsString from "./tagsAsString";
 

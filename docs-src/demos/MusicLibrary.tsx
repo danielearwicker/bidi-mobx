@@ -3,9 +3,7 @@ import * as React from "react";
 import { observable, computed } from "mobx";
 import { observer } from "mobx-react";
 
-import { box } from "../src/box"
-
-import CheckBox from "../src/components/CheckBox";
+import { CheckBox, box } from "../../index";
 
 interface TreeNodeModel {
     readonly label: string;
@@ -13,11 +11,13 @@ interface TreeNodeModel {
     readonly children?: TreeNodeModel[];
 }
 
+/** A LeafNode is a tree node which has no children and maintains its own check state */
 class LeafNode implements TreeNodeModel {    
     constructor(public readonly label: string) {}
     @observable state = false;
 }
 
+/** A ParentNode's check state is just a summary of its childrens' check states */
 class ParentNode implements TreeNodeModel {
     
     readonly children: TreeNodeModel[];

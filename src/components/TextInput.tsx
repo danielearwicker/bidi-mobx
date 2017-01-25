@@ -39,7 +39,7 @@ export interface TextInputProps extends StandardTextInputProps {
 }
 
 @observer
-export default class TextInput extends React.Component<TextInputProps, {}> {
+export class TextInput extends React.Component<TextInputProps, {}> {
 
     @action.bound
     changed(e: React.FormEvent<HTMLInputElement>) {

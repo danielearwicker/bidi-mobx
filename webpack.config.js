@@ -1,7 +1,7 @@
 var webpack = require('webpack');
 
 module.exports = {
-  entry: './kitchenSink/index.tsx',
+  entry: './docs-src/index.tsx',
   output: {
     filename: 'bundle.js',
     path: __dirname + '/built'

@@ -2,7 +2,7 @@ import * as React from "react";
 import { Rule, errors } from "../rules";
 import { observer } from "mobx-react";
 
-function ErrorBullets(props: { rule: Rule }) {
+function RuleBullets_(props: { rule: Rule }) {
     return (
         <ul>
         { errors(props.rule).map(error => <li key={error}>{error}</li>) }
@@ -10,4 +10,4 @@ function ErrorBullets(props: { rule: Rule }) {
     );
 }
 
-export default observer(ErrorBullets);
+export const RuleBullets = observer(RuleBullets_);

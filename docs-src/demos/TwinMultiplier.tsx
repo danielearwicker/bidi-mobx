@@ -2,13 +2,8 @@ import * as React from "react";
 
 import { computed, observable } from "mobx";
 
-import { box } from "../src/box";
-import { rule, rules } from "../src/rules";
-import { field, numberAsString, numberLimits, Adaptor } from "../src/field";
-import { project } from "../src/project";
-
-import TextInput from "../src/components/TextInput";
-import RuleBullets from "../src/components/RuleBullets";
+import { RuleBullets, TextInput, box, rule, rules, field, 
+    numberAsString, numberLimits, Adaptor, project } from "../../index";
 
 // Underlying everything is a very pure unadorned MobX model
 class Model {

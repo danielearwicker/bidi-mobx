@@ -1,11 +1,10 @@
 import * as React from "react"
 import { observer } from "mobx-react";
 
-import TypedSelect from "../../../src/components/Select";
-import { box } from "../../../src/box";
+import { TypedSelect, box } from "../../../../index";
 
 import Simpson from "../Simpson";
-import ViewState from "./ViewState";
+import ViewState from "../ViewState";
 import TagList from "./TagList";
 import SimpsonEditor from "./SimpsonEditor";
 import SimpsonsSelectorButtons from "./SimpsonsSelectorButtons";
@@ -26,7 +25,7 @@ export default class Simpsons extends React.Component<{}, {}> {
             <div className="simpsons">
                 <fieldset>
                     <legend>Tags</legend>
-                    <TagList tags={state.allTags.result} />
+                    <TagList tags={state.allTags} />
                 </fieldset>
                 {
                     state.filtered.length ? (
