@@ -21545,7 +21545,7 @@
 	                title: "Simpsons",
 	                description: "A silly example that covers a few interesting scenarios.",
 	                component: function () { return React.createElement(Simpsons_1.default, null); },
-	                source: "simpsons/components/Simpsons.tsx.tsx"
+	                source: "simpsons/components/Simpsons.tsx"
 	            }, {
 	                title: "Music Library",
 	                description: "Demonstrates the indeterminate checkbox state.",

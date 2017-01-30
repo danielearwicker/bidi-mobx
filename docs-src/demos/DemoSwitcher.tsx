@@ -39,7 +39,7 @@ export default class DemoSwitcher extends React.Component<{}, {}> {
         title: "Simpsons",
         description: "A silly example that covers a few interesting scenarios.",
         component: () => <Simpsons/>,
-        source: "simpsons/components/Simpsons.tsx.tsx"
+        source: "simpsons/components/Simpsons.tsx"
     }, {
         title: "Music Library",
         description: "Demonstrates the indeterminate checkbox state.",
