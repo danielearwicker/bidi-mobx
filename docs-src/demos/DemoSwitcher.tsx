@@ -11,7 +11,7 @@ import MusicLibrary from "./MusicLibrary";
 import Simpsons from "./simpsons/components/Simpsons";
 
 function Source(prop: { path: string }) {
-    const url = "https://github.com/danielearwicker/bidi-mobx/blob/master/kitchenSink/" + prop.path;
+    const url = "https://github.com/danielearwicker/bidi-mobx/blob/master/docs-src/demos/" + prop.path;
     return <a href={url}>Source</a>
 }
 

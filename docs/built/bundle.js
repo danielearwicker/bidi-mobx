@@ -21524,7 +21524,7 @@
 	var MusicLibrary_1 = __webpack_require__(196);
 	var Simpsons_1 = __webpack_require__(197);
 	function Source(prop) {
-	    var url = "https://github.com/danielearwicker/bidi-mobx/blob/master/kitchenSink/" + prop.path;
+	    var url = "https://github.com/danielearwicker/bidi-mobx/blob/master/docs-src/demos/" + prop.path;
 	    return React.createElement("a", { href: url }, "Source");
 	}
 	var DemoSwitcher = (function (_super) {
