@@ -1,5 +1,5 @@
 import * as test from "tape";
-import { observable, isObservable, isObservableObject, computed, isComputed } from "mobx";
+import { observable, isObservable, computed, isComputed } from "mobx";
 import { box } from "../index"
 
 test(`Boxing plain properties`, t => {
