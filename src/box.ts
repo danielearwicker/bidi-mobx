@@ -1,11 +1,19 @@
 import { boxer, makeBoxedValue, BoxedValue } from "boxm";
 import { extras, isObservable, isComputed } from "mobx";
 
-export const box = boxer((obj, key) => {
-    const atom = (isObservable(obj, key) || isComputed(obj, key)) 
-        && extras.getAtom(obj, key) as any as BoxedValue<any>;
+function getAtom(obj: any, key: string) {
+    try { 
+        return (isObservable(obj, key) || isComputed(obj, key)) 
+            && extras.getAtom(obj, key) as any as BoxedValue<any>;
+    }
+    catch (x) {
+        // If ordinary property, isComputed seems to throw!
+        return undefined;
+    }
+}
 
-    return atom || makeBoxedValue(obj, key);
+export const box = boxer((obj, key) => {
+    return getAtom(obj, key) || makeBoxedValue(obj, key);
 });
 
 export { BoxedValue, BoxedObject } from "boxm";
