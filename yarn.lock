@@ -2,6 +2,13 @@
 # yarn lockfile v1
 
 
+"@types/blue-tape@^0.1.30":
+  version "0.1.30"
+  resolved "https://registry.yarnpkg.com/@types/blue-tape/-/blue-tape-0.1.30.tgz#7d8dbdff46f76e502050cd8374994f4f7fefec60"
+  dependencies:
+    "@types/node" "*"
+    "@types/tape" "*"
+
 "@types/node@*":
   version "7.0.0"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-7.0.0.tgz#c081147b109da5f9c57af70571771be97ce9c0ba"
@@ -12,13 +19,17 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react@*", "@types/react@0.0.0":
+"@types/react@*":
   version "0.0.0"
   resolved "https://registry.yarnpkg.com/@types/react/-/react-0.0.0.tgz#2dd6fc1c1f5f6b3392464b067e0855e4c95bfea5"
 
-"@types/tape@^4.2.28":
-  version "4.2.28"
-  resolved "https://registry.yarnpkg.com/@types/tape/-/tape-4.2.28.tgz#331dad63f78519da362a5fc47d71ad546e0a0157"
+"@types/react@^15.0.1":
+  version "15.0.11"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-15.0.11.tgz#640d2e817dc6962cd31a1e05d8798b6604324f17"
+
+"@types/tape@*":
+  version "4.2.29"
+  resolved "https://registry.yarnpkg.com/@types/tape/-/tape-4.2.29.tgz#14cf2eb49bf852407eaaefdc53773eb90b32cf56"
   dependencies:
     "@types/node" "*"
 
@@ -175,6 +186,12 @@ block-stream@*:
   resolved "https://registry.yarnpkg.com/block-stream/-/block-stream-0.0.9.tgz#13ebfe778a03205cfe03751481ebb4b3300c126a"
   dependencies:
     inherits "~2.0.0"
+
+blue-tape@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/blue-tape/-/blue-tape-1.0.0.tgz#7581d04c07395c95c426b2ed6d1edb454a76b92b"
+  dependencies:
+    tape ">=2.0.0 <5.0.0"
 
 boom@2.x.x:
   version "2.10.1"
@@ -1025,6 +1042,12 @@ loose-envify@^1.0.0, loose-envify@^1.1.0:
   dependencies:
     js-tokens "^2.0.0"
 
+mapped-array-mobx@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/mapped-array-mobx/-/mapped-array-mobx-0.1.0.tgz#f88a4072809d63be1940168f15053b27257c11d0"
+  dependencies:
+    mobx "^3.0.0"
+
 memory-fs@^0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/memory-fs/-/memory-fs-0.2.0.tgz#f2bb25368bc121e391c2520de92969caee0a0290"
@@ -1637,7 +1660,7 @@ tapable@^0.2.5:
   version "0.2.6"
   resolved "https://registry.yarnpkg.com/tapable/-/tapable-0.2.6.tgz#206be8e188860b514425375e6f1ae89bfb01fd8d"
 
-tape@^4.6.3:
+"tape@>=2.0.0 <5.0.0":
   version "4.6.3"
   resolved "https://registry.yarnpkg.com/tape/-/tape-4.6.3.tgz#637e77581e9ab2ce17577e9bd4ce4f575806d8b6"
   dependencies:

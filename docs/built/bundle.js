@@ -26013,10 +26013,18 @@
 	"use strict";
 	var boxm_1 = __webpack_require__(192);
 	var mobx_1 = __webpack_require__(180);
+	function getAtom(obj, key) {
+	    try {
+	        return (mobx_1.isObservable(obj, key) || mobx_1.isComputed(obj, key))
+	            && mobx_1.extras.getAtom(obj, key);
+	    }
+	    catch (x) {
+	        // If ordinary property, isComputed seems to throw!
+	        return undefined;
+	    }
+	}
 	exports.box = boxm_1.boxer(function (obj, key) {
-	    var atom = (mobx_1.isObservable(obj, key) || mobx_1.isComputed(obj, key))
-	        && mobx_1.extras.getAtom(obj, key);
-	    return atom || boxm_1.makeBoxedValue(obj, key);
+	    return getAtom(obj, key) || boxm_1.makeBoxedValue(obj, key);
 	});
 
 
