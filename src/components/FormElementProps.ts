@@ -21,3 +21,6 @@ export function removeProps<T, K extends keyof T>(props: T, ...names: K[]): any 
 
     return clone;
 }
+
+export type StyleComponent<T> = React.ComponentClass<React.HTMLProps<T>> | 
+                            React.StatelessComponent<React.HTMLProps<T>>;

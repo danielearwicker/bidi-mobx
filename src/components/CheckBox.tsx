@@ -1,11 +1,14 @@
 import * as React from "react";
 import { action, Lambda, autorun } from "mobx";
 import { observer } from "mobx-react";
-import { BoxedValue } from "boxm";
-import { FormElementProps, removeProps } from "./FormElementProps";
+import { FormElementProps, removeProps, StyleComponent } from "./FormElementProps";
 
-export interface CheckBoxProps extends FormElementProps {
-    value: BoxedValue<boolean | undefined>;
+export interface CheckBoxProps extends FormElementProps {    
+    value: { // https://github.com/danielearwicker/bidi-mobx/issues/14
+        get(): boolean | undefined;
+        set(value: boolean): void;
+    };
+    component?: StyleComponent<HTMLInputElement>
 }
 
 @observer
@@ -27,12 +30,18 @@ export class CheckBox extends React.Component<CheckBoxProps, {}> {
     }
 
     render() {
+        const { component: InputComponent = "input" } = this.props;
+
         return (
-            <input type="checkbox"
+            <InputComponent type="checkbox"
                 {...removeProps(this.props, "value")}
                 checked={this.props.value.get() || false}
                 ref={ this.indeterminate }
                 onChange={this.changed}/>
         );
     }
+}
+
+export function CheckBoxUsing(component: StyleComponent<HTMLInputElement>) {
+    return (props: CheckBoxProps) => <CheckBox component={component} {...props}/>; 
 }

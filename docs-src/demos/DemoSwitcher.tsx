@@ -9,6 +9,7 @@ import Multiplier from "./Multiplier";
 import TwinMultiplier from "./TwinMultiplier";
 import MusicLibrary from "./MusicLibrary";
 import Simpsons from "./simpsons/components/Simpsons";
+import StyledComponent from "./StyledComponent";
 
 function Source(prop: { path: string }) {
     const url = "https://github.com/danielearwicker/bidi-mobx/blob/master/docs-src/demos/" + prop.path;
@@ -45,6 +46,11 @@ export default class DemoSwitcher extends React.Component<{}, {}> {
         description: "Demonstrates the indeterminate checkbox state.",
         component: () => <MusicLibrary/>,
         source: "MusicLibrary.tsx"
+    }, {
+        title: "Styled Component",
+        description: "Uses styled-components in a couple of ways.",
+        component: () => <StyledComponent/>,
+        source: "StyledComponent.tsx"
     }];
 
     @observable index = 0;

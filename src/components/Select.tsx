@@ -2,7 +2,7 @@ import * as React from "react";
 import { action } from "mobx";
 import { observer } from "mobx-react";
 import { BoxedValue } from "boxm";
-import { FormElementProps, removeProps } from "./FormElementProps";
+import { FormElementProps, removeProps, StyleComponent } from "./FormElementProps";
 
 export interface SelectProps<T> extends FormElementProps {
     value: BoxedValue<T>;
@@ -10,6 +10,8 @@ export interface SelectProps<T> extends FormElementProps {
     labels?: (value: T) => string;
     keys?: (value: T) => string; 
     size?: number;
+    selectComponent?: StyleComponent<HTMLSelectElement>;
+    optionComponent?: StyleComponent<HTMLOptionElement>;
 }
 
 @observer
@@ -40,6 +42,11 @@ export class TypedSelect<T> extends React.Component<SelectProps<T>, {}> {
     }
 
     render() {
+        const { 
+            selectComponent: SelectComponent = "select",
+            optionComponent: OptionComponent = "option",
+         } = this.props;
+
         const labels = this.props.labels || TypedSelect.defaultLabels;
         const keys = this.props.keys || TypedSelect.defaultKeys;
 
@@ -59,13 +66,13 @@ export class TypedSelect<T> extends React.Component<SelectProps<T>, {}> {
         }
 
         return ( 
-            <select {...removeProps(this.props, "value", "options", "labels", "keys", "size")}
+            <SelectComponent {...removeProps(this.props, "value", "options", "labels", "keys", "size")}
                     value={selectedKey} 
                     onChange={this.updateValue}>
             {
-                options.map(option => <option key={option.key} value={option.key}>{option.label}</option>)
+                options.map(option => <OptionComponent key={option.key} value={option.key}>{option.label}</OptionComponent>)
             }
-            </select>
+            </SelectComponent>
         );
     }
 }
@@ -73,3 +80,14 @@ export class TypedSelect<T> extends React.Component<SelectProps<T>, {}> {
 export class Select extends TypedSelect<any> {}
 export class SelectString extends TypedSelect<string> {}
 export class SelectNumber extends TypedSelect<number> {}
+
+export function SelectUsing<T>(
+    selectComponent: StyleComponent<HTMLSelectElement>,
+    optionComponent?: StyleComponent<HTMLOptionElement>) {
+
+    const S = class extends TypedSelect<T> {};
+
+    return (props: SelectProps<T>) => (
+        <S selectComponent={selectComponent} optionComponent={optionComponent} {...props}/>
+    );
+}
